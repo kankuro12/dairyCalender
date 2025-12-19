@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('css/app/index.css') }}">
     <style>
         * {
             margin: 0;
@@ -532,20 +533,59 @@
             @include('calendar.layout.partials.date')
         </div>
         @include('calendar.layout.partials.search-nav')
+        <div class="container-fluid pt-0">
+            @include('calendar.index')
+        </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
         integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous">
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bikram-sambat-js@1.0.3/dist/bikram-sambat.min.js"></script>
+
     <script>
+        function getEnglishMonthName(month) {
+            const englishMonths = [
+                'Baisakh', 'Jestha', 'Ashadh', 'Shrawan', 'Bhadra', 'Ashwin',
+                'Kartik', 'Mangsir', 'Poush', 'Magh', 'Falgun', 'Chaitra'
+            ];
+            return englishMonths[month] || '';
+        }
+
         function getNepaliMonthName(month) {
             const nepaliMonths = [
                 'बैशाख', 'जेष्ठ', 'आषाढ', 'श्रावण', 'भाद्र', 'आश्विन',
                 'कार्तिक', 'मंसिर', 'पौष', 'माघ', 'फाल्गुन', 'चैत्र'
             ];
             return nepaliMonths[month] || '';
+        }
+
+        function getNepaliDayName(day) {
+            const nepaliDays = [
+                'आइतबार', 'सोमबार', 'मङ्गलबार', 'बुधबार', 'बिहिबार', 'शुक्रबार', 'शनिबार'
+            ];
+            return nepaliDays[day] || '';
+        }
+
+        function getEnglishDayName(day) {
+            const englishDays = [
+                'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+            ];
+            return englishDays[day] || '';
+        }
+
+        function englishToNepaliNumber(englishNumber) {
+            const nepaliDigits = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+            return englishNumber.toString().split('').map(digit => nepaliDigits[parseInt(digit)]).join('');
         }
 
         function updatedNepaliClock() {
@@ -558,9 +598,21 @@
             let year = nepaliTime.getFullYear();
             const month = nepaliTime.getMonth();
             const date = nepaliTime.getDate().toString().padStart(2, '0');
-            document.getElementById('nepaliDate').innerText = `${date} ${getNepaliMonthName(
-                month
-            )} ${year},`;
+            const day = nepaliTime.getDay();
+            // document.getElementById('nepaliDate').innerText = `${date} ${getNepaliMonthName(
+        //     month
+        // )} ${year},`;
+
+            var dateConvert = convert(`${year}${month}${date}`);
+            const [nepYear, nepMonth, nepDay] = dateConvert.split('-');
+            let nepaliMonth = getNepaliMonthName(parseInt(nepMonth) - 1);
+            let englishMonth = getEnglishMonthName(parseInt(nepMonth) - 1);
+            console.log(nepaliMonth);
+            // document.getElementById('nepaliDateFull').innerText = `${nepDay} ${nepaliMonth} ${nepYear}`;
+            // console.log(nepYear, nepMonth, nepDay);
+            console.log(getNepaliMonthName(nepMonth));
+            console.log(day);
+            document.getElementById('englishDay').innerText = getEnglishDayName(day);
             let hours = nepaliTime.getHours();
             const minutes = nepaliTime.getMinutes().toString().padStart(2, '0');
             const seconds = nepaliTime.getSeconds().toString().padStart(2, '0');
@@ -583,13 +635,46 @@
             const timeString = `${hours}:${minutes}:${seconds} ${ampm}`;
 
             document.getElementById('dayTime').innerText = `${period} ${timeString}`;
-            return month;
+            return {};
         }
         console.log(updatedNepaliClock());
         updatedNepaliClock();
         setInterval(updatedNepaliClock, 1000);
         console.log(updatedNepaliClock());
 
+        function convert(dateConvert) {
+
+            // let reversed = '';
+            // for (let i = dateConvert.length - 1; i >= 0; i--) {
+            //     reversed += dateConvert[i];
+            // }
+            let month;
+            let day;
+            let year;
+
+            year = parseInt(dateConvert.slice(0, 4));
+            month = parseInt(dateConvert.slice(4, 6)) + 1;
+            day = parseInt(dateConvert.slice(6, 8));
+
+            day = day + 16;
+
+
+            if (day > 30) {
+                day = day - 30;
+                month = month + 1;
+            }
+            month = month + 8;
+            if (month > 12) {
+                month = month - 12;
+                year = year + 1;
+            }
+            year = year + 56;
+            day = String(day).padStart(2, '0');
+            month = String(month).padStart(2, '0');
+            return (`${year}-${month}-${day}`);
+
+
+        }
 
 
         const hamburger = document.getElementById('hamburger');
@@ -618,6 +703,93 @@
                 hamburger.classList.remove('active');
                 navCenter.classList.remove('active');
             }
+        });
+        $(document).ready(function() {
+            const $sliderTrack = $('#sliderTrack');
+            const $prevBtn = $('#prevBtn');
+            const $nextBtn = $('#nextBtn');
+
+            // Clone all slides and append to create infinite loop
+            const $originalSlides = $('.slide-item').clone();
+            $sliderTrack.append($originalSlides);
+
+            const $slides = $('.slide-item');
+            let currentPosition = 0;
+            const slideWidth = 295; // 280px width + 15px gap
+            const originalSlidesCount = $originalSlides.length;
+            const totalWidth = originalSlidesCount * slideWidth;
+
+            function slideNext() {
+                currentPosition += slideWidth;
+                $sliderTrack.css('transform', `translateX(-${currentPosition}px)`);
+
+                // Reset to beginning when we've scrolled past all original slides
+                if (currentPosition >= totalWidth) {
+                    setTimeout(function() {
+                        $sliderTrack.css('transition', 'none');
+                        currentPosition = 0;
+                        $sliderTrack.css('transform', `translateX(0)`);
+
+                        // Re-enable transition after a brief moment
+                        setTimeout(function() {
+                            $sliderTrack.css('transition', 'transform 0.5s ease');
+                        }, 50);
+                    }, 500);
+                }
+            }
+
+            function slidePrev() {
+                // If at the beginning, jump to the end (of original slides)
+                if (currentPosition <= 0) {
+                    $sliderTrack.css('transition', 'none');
+                    currentPosition = totalWidth;
+                    $sliderTrack.css('transform', `translateX(-${currentPosition}px)`);
+
+                    setTimeout(function() {
+                        $sliderTrack.css('transition', 'transform 0.5s ease');
+                        currentPosition -= slideWidth;
+                        $sliderTrack.css('transform', `translateX(-${currentPosition}px)`);
+                    }, 50);
+                } else {
+                    currentPosition -= slideWidth;
+                    $sliderTrack.css('transform', `translateX(-${currentPosition}px)`);
+                }
+            }
+
+            $nextBtn.on('click', slideNext);
+            $prevBtn.on('click', slidePrev);
+
+            // Keyboard navigation
+            $(document).on('keydown', function(e) {
+                if (e.key === 'ArrowLeft') {
+                    slidePrev();
+                } else if (e.key === 'ArrowRight') {
+                    slideNext();
+                }
+            });
+
+            // Touch/Swipe support
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            $sliderTrack.on('touchstart', function(e) {
+                touchStartX = e.touches[0].clientX;
+            });
+
+            $sliderTrack.on('touchmove', function(e) {
+                touchEndX = e.touches[0].clientX;
+            });
+
+            $sliderTrack.on('touchend', function() {
+                if (touchStartX - touchEndX > 50) {
+                    slideNext();
+                }
+                if (touchEndX - touchStartX > 50) {
+                    slidePrev();
+                }
+            });
+
+
         });
     </script>
 </body>

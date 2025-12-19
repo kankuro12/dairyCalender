@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ne">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Hamro Patro - Calendar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>समाचार बुलेटिन - News Slider</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -15,635 +14,316 @@
         }
 
         body {
-            font-family: 'Mukta', sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
         }
 
-        /* Navigation Styles */
-        .nav {
-            width: 100%;
-            min-height: 72px;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 40px;
-            border-bottom: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            position: relative;
+        .slider-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 1001;
-        }
-
-        .logo-icon {
-            width: 45px;
-            height: 45px;
-            background-color: #dc2626;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            color: white;
-            font-weight: 700;
-            font-size: 12px;
-            text-align: center;
-            line-height: 1.2;
-            padding: 4px;
-        }
-
-        .logo-text {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1a1a1a;
-            text-decoration: none;
-            letter-spacing: 0.5px;
-        }
-
-        .nav-center {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-        }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            align-items: center;
-            gap: 35px;
-            margin: 0;
-        }
-
-        .nav-links li {
-            display: inline-block;
-        }
-
-        .nav-links li a {
-            color: #1a1a1a;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            white-space: nowrap;
-        }
-
-        .nav-links li a:hover {
-            color: #dc2626;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            z-index: 1001;
-        }
-
-        .language-btn {
-            background-color: transparent;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-size: 14px;
+        .slider-header {
+            font-size: 24px;
             font-weight: 600;
-            color: #1a1a1a;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            color: #333;
         }
 
-        .language-btn:hover {
-            background-color: #f3f4f6;
-            border-color: #9ca3af;
-        }
-
-        .user-icon {
-            width: 40px;
-            height: 40px;
-            background-color: #e5e7eb;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .user-icon:hover {
-            background-color: #d1d5db;
-        }
-
-        .user-icon svg {
-            width: 24px;
-            height: 24px;
-            fill: #6b7280;
-        }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 5px;
-            z-index: 1001;
-        }
-
-        .hamburger span {
-            width: 28px;
-            height: 3px;
-            background-color: #1a1a1a;
-            transition: all 0.3s ease;
-            border-radius: 2px;
-        }
-
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(8px, 8px);
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(8px, -8px);
-        }
-
-        /* Container Fluid */
-        .container-fluid {
-            width: 100%;
-            padding: 0;
-        }
-
-        /* Date Banner Section */
-        .date-banner {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            color: white;
-            padding: 20px 50px;
+        .slider-wrapper {
             position: relative;
             overflow: hidden;
         }
 
-        .date-banner::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
+        .slider-track {
+            display: flex;
+            gap: 15px;
+            transition: transform 0.5s ease;
+        }
+
+        .slide-item {
+            min-width: 280px;
+            height: 240px;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .slide-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .slide-item img {
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
-            pointer-events: none;
+            object-fit: cover;
         }
 
-        .date-content {
-            position: relative;
-            z-index: 1;
-            max-width: 1400px;
-            margin: 0 auto;
+        .slide-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+            padding: 20px 15px 15px;
+            color: white;
         }
 
-        .nepali-date {
-            font-size: 42px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            line-height: 1.2;
-        }
-
-        .english-day {
-            font-size: 38px;
-            font-weight: 500;
-            margin-bottom: 12px;
-            opacity: 0.95;
-        }
-
-        .nepali-tithi {
-            font-size: 22px;
-            font-weight: 500;
-            margin-bottom: 6px;
-            opacity: 0.9;
-        }
-
-        .paksya-info {
-            font-size: 18px;
-            font-weight: 400;
-            margin-bottom: 8px;
-            opacity: 0.85;
-        }
-
-        .day-time {
+        .slide-title {
             font-size: 16px;
-            font-weight: 400;
-            margin-bottom: 4px;
-            opacity: 0.8;
-        }
-
-        .english-date {
-            font-size: 16px;
-            font-weight: 400;
-            opacity: 0.75;
-        }
-
-        /* Calendar Navigation Section */
-        .calendar-nav {
-            background-color: #f9fafb;
-            padding: 20px 50px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .calendar-nav-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .calendar-title {
-            font-size: 18px;
             font-weight: 600;
-            color: #6b7280;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .search-box {
+        .slide-sources {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
-        .search-icon {
-            width: 20px;
-            height: 20px;
-            fill: #6b7280;
+        .source-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            border: 2px solid white;
         }
 
-        .search-input {
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-size: 14px;
-            outline: none;
-            width: 250px;
-            transition: border-color 0.3s ease;
+        .source-count {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 600;
         }
 
-        .search-input:focus {
-            border-color: #dc2626;
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+            transition: all 0.3s ease;
         }
 
-        .search-input::placeholder {
-            color: #9ca3af;
+        .nav-button:hover {
+            background: #f0f0f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
-        /* Responsive Styles */
-        @media (max-width: 991px) {
-            .hamburger {
-                display: flex;
-                order: 2;
-            }
+        .nav-button i {
+            font-size: 18px;
+            color: #333;
+        }
 
-            .logo {
-                order: 1;
-            }
+        .nav-prev {
+            left: -20px;
+        }
 
-            .nav-right {
-                order: 3;
-            }
-
-            .nav-center {
-                position: fixed;
-                top: 72px;
-                left: -100%;
-                width: 100%;
-                height: calc(100vh - 72px);
-                background-color: #ffffff;
-                flex-direction: column;
-                justify-content: flex-start;
-                padding: 30px 20px;
-                transition: left 0.3s ease;
-                overflow-y: auto;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-
-            .nav-center.active {
-                left: 0;
-            }
-
-            .nav-links {
-                flex-direction: column;
-                gap: 0;
-                width: 100%;
-                align-items: flex-start;
-            }
-
-            .nav-links li {
-                width: 100%;
-                border-bottom: 1px solid #f3f4f6;
-            }
-
-            .nav-links li a {
-                display: block;
-                padding: 18px 16px;
-                font-size: 16px;
-                width: 100%;
-            }
-
-            .nav-links li a:hover {
-                background-color: #f9fafb;
-            }
-
-            .date-banner {
-                padding: 35px 30px;
-            }
-
-            .calendar-nav {
-                padding: 18px 30px;
-            }
-
-            .nepali-date {
-                font-size: 36px;
-            }
-
-            .english-day {
-                font-size: 32px;
-            }
-
-            .nepali-tithi {
-                font-size: 20px;
-            }
-
-            .paksya-info {
-                font-size: 16px;
-            }
-
-            .search-input {
-                width: 200px;
-            }
+        .nav-next {
+            right: -20px;
         }
 
         @media (max-width: 768px) {
-            .nav {
-                padding: 12px 20px;
+            .slide-item {
+                min-width: 250px;
+                height: 220px;
             }
 
-            .date-banner {
-                padding: 30px 25px;
+            .nav-button {
+                width: 35px;
+                height: 35px;
             }
 
-            .calendar-nav {
-                padding: 16px 25px;
+            .nav-prev {
+                left: -10px;
             }
 
-            .calendar-nav-content {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-
-            .nepali-date {
-                font-size: 32px;
-            }
-
-            .english-day {
-                font-size: 28px;
-            }
-
-            .nepali-tithi {
-                font-size: 18px;
-            }
-
-            .paksya-info {
-                font-size: 15px;
-            }
-
-            .day-time {
-                font-size: 14px;
-            }
-
-            .english-date {
-                font-size: 14px;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            .search-input {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .date-banner {
-                padding: 25px 20px;
-            }
-
-            .calendar-nav {
-                padding: 14px 20px;
-            }
-
-            .nepali-date {
-                font-size: 28px;
-            }
-
-            .english-day {
-                font-size: 24px;
-            }
-
-            .nepali-tithi {
-                font-size: 16px;
-            }
-
-            .paksya-info {
-                font-size: 14px;
-            }
-
-            .day-time {
-                font-size: 13px;
-            }
-
-            .english-date {
-                font-size: 13px;
-            }
-
-            .calendar-title {
-                font-size: 16px;
-            }
-
-            .language-btn {
-                padding: 6px 12px;
-                font-size: 13px;
-            }
-
-            .user-icon {
-                width: 36px;
-                height: 36px;
-            }
-
-            .user-icon svg {
-                width: 20px;
-                height: 20px;
-            }
-        }
-
-        @media (max-width: 375px) {
-            .logo-text {
-                display: none;
-            }
-
-            .nav-right {
-                gap: 8px;
-            }
-
-            .date-banner {
-                padding: 20px 16px;
-            }
-
-            .calendar-nav {
-                padding: 12px 16px;
-            }
-
-            .nepali-date {
-                font-size: 24px;
-            }
-
-            .english-day {
-                font-size: 22px;
-            }
-
-            .nepali-tithi {
-                font-size: 15px;
+            .nav-next {
+                right: -10px;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Navigation Bar -->
-    <nav class="nav">
-        <div class="logo">
-            <div class="logo-icon">
-                हाम्रो<br>पात्रो
-            </div>
-            <a href="/" class="logo-text">HAMRO PATRO</a>
-        </div>
+    <div class="slider-container">
+        <h2 class="slider-header">समाचार बुलेटिन</h2>
 
-        <div class="hamburger" id="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
+        <div class="slider-wrapper">
+            <button class="nav-button nav-prev" id="prevBtn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
 
-        <div class="nav-center" id="navCenter">
-            <ul class="nav-links">
-                <li><a href="#">Remit</a></li>
-                <li><a href="#">Mart</a></li>
-                <li><a href="#">Gifts</a></li>
-                <li><a href="#">Recharge</a></li>
-                <li><a href="#">Health</a></li>
-                <li><a href="#">Jyotish</a></li>
-                <li><a href="#">Rashifal</a></li>
-                <li><a href="#">Podcasts</a></li>
-                <li><a href="#">News</a></li>
-                <li><a href="#">Blog</a></li>
-                <li><a href="#">Gold/Silver</a></li>
-                <li><a href="#">Forex</a></li>
-                <li><a href="#">Converter</a></li>
-            </ul>
-        </div>
+            <div class="slider-track" id="sliderTrack">
+                <!-- Slide 1 -->
+                <div class="slide-item">
+                    <img src="https://images.unsplash.com/photo-1464746133101-a2c3f88e0dd9?w=500&h=400&fit=crop"
+                        alt="News">
+                    <div class="slide-overlay">
+                        <div class="slide-title">नेपालमा तुल्लोदेखिमा सिद्धार्थ देवी भारतको</div>
+                        <div class="slide-sources">
+                            <div class="source-icon" style="background: #1DA1F2;">🐦</div>
+                            <div class="source-icon" style="background: #FF0000;">📺</div>
+                            <div class="source-icon" style="background: #0077B5;">💼</div>
+                            <div class="source-icon" style="background: #25D366;">📱</div>
+                            <div class="source-count">+3</div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="nav-right">
-            <button class="language-btn">EN</button>
-            <div class="user-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path
-                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                </svg>
-            </div>
-        </div>
-    </nav>
+                <!-- Slide 2 -->
+                <div class="slide-item">
+                    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=500&h=400&fit=crop"
+                        alt="News">
+                    <div class="slide-overlay">
+                        <div class="slide-title">गाहा सृङ्खलापछि हत्तुरुआमाको हत्या, रे पुज</div>
+                        <div class="slide-sources">
+                            <div class="source-icon" style="background: #FF4500;">📰</div>
+                            <div class="source-icon" style="background: #00C4CC;">🌐</div>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Main Content Container Fluid -->
-    <div class="container-fluid">
-        <!-- Date Banner Section -->
-        <div class="date-banner">
-            <div class="date-content">
-                <div class="nepali-date" id="nepaliDate">३ पौष २०८२,</div>
-                <div class="english-day" id="englishDay">Thursday</div>
-                <div class="nepali-tithi" id="nepaliTithi">पुष कृष्ण चतुर्दंशी</div>
-                <div class="paksya-info" id="paksyaInfo">पक्ष्य: Chaturdashi</div>
-                <div class="day-time" id="dayTime">Day 03:13:14</div>
-                <div class="english-date" id="englishDate">Dec 18, 2025</div>
-            </div>
-        </div>
+                <!-- Slide 3 -->
+                <div class="slide-item">
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&h=400&fit=crop"
+                        alt="News">
+                    <div class="slide-overlay">
+                        <div class="slide-title">अर्थपालको हिंसाले भिकाडमा बाल्किए, आओसले बात्तिन</div>
+                        <div class="slide-sources">
+                            <div class="source-icon" style="background: #E60023;">📌</div>
+                            <div class="source-icon" style="background: #FF0000;">▶️</div>
+                            <div class="source-icon" style="background: #1DA1F2;">🐦</div>
+                            <div class="source-icon" style="background: #333;">📱</div>
+                            <div class="source-count">+1</div>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Calendar Navigation Section -->
-        <div class="calendar-nav">
-            <div class="calendar-nav-content">
-                <div class="calendar-title">Nepali Calendar 2082</div>
-                <div class="search-box">
-                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path
-                            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-                    </svg>
-                    <input type="text" class="search-input" placeholder="Search events">
+                <!-- Slide 4 -->
+                <div class="slide-item">
+                    <img src="https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?w=500&h=400&fit=crop"
+                        alt="News">
+                    <div class="slide-overlay">
+                        <div class="slide-title">अमेरिकाको लागि रिमे कार्यक्रम चोलेन निर्णयमा</div>
+                        <div class="slide-sources">
+                            <div class="source-icon" style="background: #00C4CC;">🌐</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 5 -->
+                <div class="slide-item">
+                    <img src="https://images.unsplash.com/photo-1520769669658-f07657f5a307?w=500&h=400&fit=crop"
+                        alt="News">
+                    <div class="slide-overlay">
+                        <div class="slide-title">ट्रम्प महिला २०० जनासम्मको नागरिकता रद्द</div>
+                        <div class="slide-sources">
+                            <div class="source-icon" style="background: #E60023;">📌</div>
+                            <div class="source-icon" style="background: #0077B5;">💼</div>
+                            <div class="source-icon" style="background: #FF0000;">▶️</div>
+                            <div class="source-icon" style="background: #FF4500;">📰</div>
+                            <div class="source-count">+4</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 6 -->
+                <div class="slide-item">
+                    <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=400&fit=crop"
+                        alt="News">
+                    <div class="slide-overlay">
+                        <div class="slide-title">अत्तिलिक अर्लाममा रोहे बालिष्टसले सुनाई चुनाई</div>
+                        <div class="slide-sources">
+                            <div class="source-icon" style="background: #E60023;">📌</div>
+                            <div class="source-icon" style="background: #0077B5;">💼</div>
+                            <div class="source-icon" style="background: #FF0000;">▶️</div>
+                            <div class="source-icon" style="background: #333;">📱</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 7 -->
+                <div class="slide-item">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=500&h=400&fit=crop"
+                        alt="News">
+                    <div class="slide-overlay">
+                        <div class="slide-title">काठमाडौं महानगरको नगरसभा पुरै सु मा</div>
+                        <div class="slide-sources">
+                            <div class="source-icon" style="background: #E60023;">📌</div>
+                            <div class="source-icon" style="background: #00C4CC;">🌐</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 8 -->
+                <div class="slide-item">
+                    <img src="https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=500&h=400&fit=crop"
+                        alt="News">
+                    <div class="slide-overlay">
+                        <div class="slide-title">अमेरिकाको गम्को दिगो कार्यक्रम बन्द गर्ने घोषणा</div>
+                        <div class="slide-sources">
+                            <div class="source-icon" style="background: #1DA1F2;">🐦</div>
+                            <div class="source-icon" style="background: #0077B5;">💼</div>
+                            <div class="source-icon" style="background: #FF0000;">📺</div>
+                            <div class="source-icon" style="background: #00C4CC;">🌐</div>
+                            <div class="source-count">+1</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 9 -->
+                <div class="slide-item">
+                    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=500&h=400&fit=crop"
+                        alt="News">
+                    <div class="slide-overlay">
+                        <div class="slide-title">अमेरिकाले एकास्मे गनु</div>
+                        <div class="slide-sources">
+                            <div class="source-icon" style="background: #FF4500;">📰</div>
+                            <div class="source-icon" style="background: #00C4CC;">🌐</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Your other content can go here -->
+            <button class="nav-button nav-next" id="nextBtn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
     </div>
 
-    <script>
-        // Hamburger menu toggle
-        const hamburger = document.getElementById('hamburger');
-        const navCenter = document.getElementById('navCenter');
-
-        hamburger.addEventListener('click', function() {
-            hamburger.classList.toggle('active');
-            navCenter.classList.toggle('active');
-        });
-
-        const navLinks = document.querySelectorAll('.nav-links li a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                hamburger.classList.remove('active');
-                navCenter.classList.remove('active');
-            });
-        });
-
-        document.addEventListener('click', function(event) {
-            const isClickInsideNav = navCenter.contains(event.target);
-            const isClickOnHamburger = hamburger.contains(event.target);
-
-            if (!isClickInsideNav && !isClickOnHamburger && navCenter.classList.contains('active')) {
-                hamburger.classList.remove('active');
-                navCenter.classList.remove('active');
-            }
-        });
-
-        // Update date and time
-        function updateDateTime() {
-            const now = new Date();
-
-            const options = {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            };
-            document.getElementById('englishDate').textContent = now.toLocaleDateString('en-US', options);
-
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            document.getElementById('englishDay').textContent = days[now.getDay()];
-
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('dayTime').textContent = `Day ${hours}:${minutes}:${seconds}`;
-        }
-
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
-    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script></script>
 </body>
 
 </html>
