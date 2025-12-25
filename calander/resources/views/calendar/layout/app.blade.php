@@ -566,21 +566,18 @@
             input.nepaliDatePicker();
         }
 
-        function getEnglishMonthName(month) {
-            const englishMonths = [
-                'Baisakh', 'Jestha', 'Ashadh', 'Shrawan', 'Bhadra', 'Ashwin',
-                'Kartik', 'Mangsir', 'Poush', 'Magh', 'Falgun', 'Chaitra'
-            ];
-            return englishMonths[month] || '';
-        }
 
-        function getNepaliMonthName(month) {
-            const nepaliMonths = [
-                'बैशाख', 'जेष्ठ', 'आषाढ', 'श्रावण', 'भाद्र', 'आश्विन',
-                'कार्तिक', 'मंसिर', 'पौष', 'माघ', 'फाल्गुन', 'चैत्र'
-            ];
-            return nepaliMonths[month] || '';
-        }
+        const engMonths = [
+            'Baisakh', 'Jestha', 'Ashadh', 'Shrawan', 'Bhadra', 'Ashwin',
+            'Kartik', 'Mangsir', 'Poush', 'Magh', 'Falgun', 'Chaitra'
+        ];
+
+
+
+        const nepMonths = [
+            'बैशाख', 'जेष्ठ', 'आषाढ', 'श्रावण', 'भाद्र', 'आश्विन',
+            'कार्तिक', 'मंसिर', 'पौष', 'माघ', 'फाल्गुन', 'चैत्र'
+        ];
 
         function getNepaliDayName(day) {
             const nepaliDays = [

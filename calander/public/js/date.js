@@ -99,12 +99,17 @@ function renderCalendar(bsYear, bsMonth) {
     const cells = document.querySelectorAll('.calendar-dates li');
     cells.forEach(cell => {
         cell.className = '';
-        cell.innerHtTML = '';
+        cell.innerHTML = '';
     });
     const daysInMonth = NepaliFunctions.BS.GetDaysInMonth(bsYear, bsMonth);
     const firstAdDate = NepaliFunctions.BS2AD(`${bsYear}-${bsMonth}-1`);
     const firstJsDate = new Date(firstAdDate);
     const startDay = firstJsDate.getDay();
+
+    //map garna lai sub gareko 
+    const gridStartAdDate = new Date(firstJsDate);
+    gridStartAdDate.setDate(firstJsDate.getDate() - startDay);
+
 
     const today = NepaliFunctions.BS.GetCurrentDate();
 
@@ -128,73 +133,110 @@ function renderCalendar(bsYear, bsMonth) {
     }
     const prevMonthDays = NepaliFunctions.BS.GetDaysInMonth(prevYear, prevMonth);
 
-    let prevDay = prevMonthDays - startDay + 1;
-    for (let i = 0; i < startDay; i++) {
+    // let prevDay = prevMonthDays - startDay + 1;
+    // for (let i = 0; i < startDay; i++) {
+    //     const cell = cells[i];
+    //     const isSaturday = i % 7 === 6;
+
+    //     cell.classList.add('disabled');
+    //     if (isSaturday) {
+    //         cell.classList.add('saturday');
+    //     }
+    //     cell.innerHTML = `
+    //     <span class="nep">${NepaliFunctions.ConvertToUnicode(prevDay)}</span>
+    //     <span class="eng">${engDay}</span>
+    //     `;
+    //     engDay++;
+    //     prevDay++;
+    //     if (engDay > engMonthDays) {
+    //         engDay = 1;
+    //     }
+    // }
+
+
+    // let index = startDay;
+    // for (let day = 1; day <= daysInMonth; day++) {
+    //     const cell = cells[index];
+
+    //     const isSaturday = index % 7 === 6;
+
+    //     const isToday =
+    //         bsYear === today.year &&
+    //         bsMonth === today.month &&
+    //         day === today.day;
+
+    //     cell.innerHTML = `
+    //     <span class="nep">${NepaliFunctions.ConvertToUnicode(day)}</span>
+    //     <span class="eng">${engDay}</span>
+    //     `;
+    //     if (isSaturday) {
+    //         cell.classList.add('saturday');
+    //     }
+    //     if (isToday) {
+    //         cell.classList.add('today');
+    //     }
+
+    //     engDay++;
+    //     if (engDay > engMonthDays) {
+    //         engDay = 1;
+    //     }
+    //     index++;
+    // }
+    // let nextDay = 1;
+    // for (let i = index; i < 42; i++) {
+    //     const cell = cells[i];
+    //     const isSaturday = i % 7 === 6;
+    //     cells[i].classList.add('disabled');
+    //     if (isSaturday) {
+    //         cells[i].classList.add('saturday');
+    //     }
+    //     cell.innerHTML = `
+    //     <span class="nep">${NepaliFunctions.ConvertToUnicode(nextDay)}</span>
+    //     <span class="eng">${engDay}</span>
+    //     `;
+    //     engDay++;
+    //     nextDay++;
+
+    //     if (engDay > engMonthDays) {
+    //         engDay = 1;
+    //     }
+    // }
+    for (let i = 0; i < 42; i++) {
         const cell = cells[i];
-        const isSaturday = i % 7 === 6;
 
-        cell.classList.add('disabled');
-        if (isSaturday) {
-            cell.classList.add('saturday');
+        const adDate = new Date(gridStartAdDate);
+        adDate.setDate(gridStartAdDate.getDate() + i);
+        const adObj = {
+            year: adDate.getFullYear(),
+            month: adDate.getMonth() + 1,
+            day: adDate.getDate()
         }
-        cell.innerHTML = `
-        <span class="nep">${NepaliFunctions.ConvertToUnicode(prevDay)}</span>
-        <span class="eng">${engDay}</span>
-        `;
-        engDay++;
-        prevDay++;
-        if (engDay > engMonthDays) {
-            engDay = 1;
+
+        const bs = NepaliFunctions.AD2BS(adObj);
+        if (!bs) {
+            cell.className = 'disabled';
+            cell.innerHTML = '';
+            continue;
         }
-    }
 
-
-    let index = startDay;
-    for (let day = 1; day <= daysInMonth; day++) {
-        const cell = cells[index];
-
-        const isSaturday = index % 7 === 6;
-
+        const isCurrentMonth = bs.year === bsYear && bs.month === bsMonth;
         const isToday =
-            bsYear === today.year &&
-            bsMonth === today.month &&
-            day === today.day;
-
-        cell.innerHTML = `
-        <span class="nep">${NepaliFunctions.ConvertToUnicode(day)}</span>
-        <span class="eng">${engDay}</span>
-        `;
+            bs.year === today.year &&
+            bs.month === today.month &&
+            bs.day === today.day;
+        const isSaturday = i % 7 === 6;
+        cell.className = "";
+        if (!isCurrentMonth) {
+            cell.classList.add('disabled');
+        }
         if (isSaturday) {
             cell.classList.add('saturday');
         }
         if (isToday) {
             cell.classList.add('today');
         }
-
-        engDay++;
-        if (engDay > engMonthDays) {
-            engDay = 1;
-        }
-        index++;
-    }
-    let nextDay = 1;
-    for (let i = index; i < 42; i++) {
-        const cell = cells[i];
-        const isSaturday = i % 7 === 6;
-        cells[i].classList.add('disabled');
-        if (isSaturday) {
-            cells[i].classList.add('saturday');
-        }
-        cell.innerHTML = `
-        <span class="nep">${NepaliFunctions.ConvertToUnicode(nextDay)}</span>
-        <span class="eng">${engDay}</span>
-        `;
-        engDay++;
-        nextDay++;
-
-        if (engDay > engMonthDays) {
-            engDay = 1;
-        }
+        cell.innerHTML = `<span class="nep">${NepaliFunctions.ConvertToUnicode(bs.day)}</span>
+            <span class="eng">${adDate.getDate()}</span>`;
     }
 }
 
@@ -214,6 +256,7 @@ document.addEventListener('DOMContentLoaded', function () {
         currentMonth = parseInt(e.target.value, 10);
         syncUI();
     });
+
 
     const calendar = document.querySelector('.calendar');
 
@@ -241,6 +284,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function syncUI() {
         renderCalendar(currentYear, currentMonth);
         dropdownsCalendar(currentYear, currentMonth);
+        updateCalendarHeader(currentYear, currentMonth);
     }
 
 });
@@ -272,6 +316,46 @@ function dropdownsCalendar(currentYear, currentMonth) {
     }
 
 
+}
+// const engMonths = [
+//     'Baisakh', 'Jestha', 'Ashadh', 'Shrawan', 'Bhadra', 'Ashwin',
+//     'Kartik', 'Mangsir', 'Poush', 'Magh', 'Falgun', 'Chaitra'
+// ];
+
+function updateCalendarHeader(bsYear, bsMonth) {
+
+    const daysInMonth = NepaliFunctions.BS.GetDaysInMonth(bsYear, bsMonth);
+
+    const adStart = bsToAdDate(bsYear, bsMonth, 1);
+    const adEnd = bsToAdDate(bsYear, bsMonth, daysInMonth);
+
+    if (!adStart || !adEnd) {
+        console.warn('Header AD conversion failed');
+        return;
+    }
+
+    // BS header
+    const nepMonth = NepaliFunctions.BS.GetMonthInUnicode(bsMonth - 1);
+    const nepYear = NepaliFunctions.ConvertToUnicode(bsYear);
+
+    // AD header
+    const startMonth = adStart.toLocaleString('en-US', { month: 'short' });
+    const endMonth = adEnd.toLocaleString('en-US', { month: 'short' });
+
+    const startYear = adStart.getFullYear();
+    const endYear = adEnd.getFullYear();
+
+    const adText = startYear === endYear
+        ? `${startMonth}/${endMonth} ${startYear}`
+        : `${startMonth}/${endMonth} ${startYear}–${endYear}`;
+
+    document.querySelector('.calendar-right .eng-date').textContent =
+        `${nepYear} ${nepMonth} | ${adText}`;
+}
+
+function bsToAdDate(bsYear, bsMonth, bsDay) {
+    const adDateStr = NepaliFunctions.BS2AD(`${bsYear}-${bsMonth}-${bsDay}`);
+    return adDateStr ? new Date(adDateStr) : null;
 }
 
 
