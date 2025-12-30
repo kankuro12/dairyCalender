@@ -64,4 +64,22 @@ $NepaliDate=NepaliDate::create(\Carbon\Carbon::now())->toBS(); // 2082-02-04
         return view('backend.month_data', ['month' => $month
         , 'data' => $dayByDate]);
     }
+    public function showMonthData($month){
+        $response=Http::get('http://localhost:3000/api/calendar/summary');
+        if($response->failed()){
+             return response()->json(['error' => 'Failed to fetch events'], 500);
+        }
+        $calendarSummary = collect($response->json('calendarSummary'));
+        $monthData=$calendarSummary->firstWhere('monthIndex', (int)$month);
+        if(!$monthData){
+            return response()->json(['error' => 'Month data not found'], 404);
+        }
+        $dayByDate=collect($monthData['days'])->mapWithKeys(function($day){
+         [$y,$m,$d]=explode('-',$day['nepaliDate']);
+         $normalizedKey= sprintf('%d-%d-%d',$y,(int)$m,(int)$d);
+         return [$normalizedKey => $day];
+        });
+      
+        return response()->json($dayByDate);
+    }
 }
