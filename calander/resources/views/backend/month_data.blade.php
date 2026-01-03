@@ -54,7 +54,7 @@
 
 <body>
     <button id="fetchapi">Fetch API Data</button>
-    <button id="fetchDbData">Fetch DB Data</button>
+
     <div id="loadingOverlay" class="loading-overlay" style="display:none;">
         <div class="spinner"></div>
         <div class="loading-text">Fetching data…</div>
@@ -68,21 +68,25 @@
         <table border="1" cellpadding="10" id="calendarTable">
             <tr>
                 <th>Sn</th>
-                <th>Date</th>
+                <th>Bs Date</th>
+                <th>AD Date</th>
                 <th>Event</th>
                 <th>Holiday</th>
                 <th>Extra Event</th>
                 <th>Date Text</th>
                 <th>Notes</th>
             </tr>
-            @for ($i = 1; $i <= 32; $i++)
+            @for ($i = 1; $i <= $daysInMonth; $i++)
                 @php
-                    $datekey = "2082-{$month}-$i";
+                    $datekey = "{$year}-{$month}-$i";
+                    $day = $events[$datekey] ?? null;
 
                 @endphp
                 <tr data-date="{{ $datekey }}">
                     <td>{{ $i }}</td>
                     <td>{{ $datekey }}</td>
+                    <td class="addate" data-field="ad-date" id='ad-date'>
+                    </td>
                     {{-- @if ($day)
                         <td class="editable" data-field="event">{{ ($day['date'] ?? '') !== '--' ? $day['date'] : '' }}
                         </td>
@@ -91,11 +95,20 @@
                         <td class="editable" data-field="date_text">{{ $day['text'] ?? '' }}</td>
                         <td class="editable" data-field="notes"></td>
                     {{-- @else --}}
-                    <td class="editable" data-field="event"></td>
-                    <td class="editable" data-field="holiday"></td>
-                    <td class="editable" data-field="extra_event"></td>
-                    <td class="editable" data-field="date_text"></td>
-                    <td class="editable" data-field="notes"></td>
+                    <td class="editable" data-field="event">{{ $day && $day->title !== '--' ? $day->title : '' }}</td>
+                    <td class="editable" data-field="holiday">
+                        {{ $day && $day->is_holiday ? 'Yes' : '' }}
+                    </td>
+                    <td class="editable" data-field="extra_event">
+                        {{ $day ? $day->extra_events : '' }}
+                    </td>
+                    <td class="editable" data-field="date_text">
+                        {{ $day ? $day->tithi : '' }}
+                    </td>
+                    <td class="editable" data-field="notes">
+                        {{ $day ? $day->notes : '' }}
+                    </td>
+                    <input type ="hidden" class="ad-date-input">
                     {{-- @endif --}}
                 </tr>
             @endfor
@@ -104,6 +117,28 @@
         <button type="submit" class="btn btn-success">Save Month Data</button>
     </form>
     <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js" type="text/javascript"></script>
+    <script src={{ asset('js/nepali.datepicker.min.js') }}></script>
+    <script>
+        // const daysInMonth = NepaliFunctions.BS.GetDaysInMonth({{ $year }}, {{ $month }});
+        // document.querySelectorAll('.addate').forEach((td, index) => {
+        //     const adDate = NepaliFunctions.BS2AD(`{{ $year }}-{{ $month }}-${index + 1}`);
+        //     td.innerText = adDate;
+        //     // `${adDate.year}-${String(adDate.month).padStart(2, '0')}-${String(adDate.day).padStart(2, '0')}`;
+        // });
+        document.querySelectorAll('#calendarTable tr[data-date]').forEach((row, index) => {
+
+            const bsDate = row.getAttribute('data-date');
+            const adDate = NepaliFunctions.BS2AD(`{{ $year }}-{{ $month }}-${index+1}`);
+            if (!adDate) return;
+
+            const adTd = row.querySelector('.addate');
+            if (adTd) adTd.innerText = adDate;
+            row.querySelector('.ad-date-input').value = adDate;
+
+
+
+        });
+    </script>
     <script>
         document.addEventListener('click', function(e) {
             const td = e.target.closest('.editable');
@@ -127,14 +162,21 @@
         });
         document.getElementById('monthForm').addEventListener('submit', function() {
             document.querySelectorAll('#calendarTable tr[data-date]').forEach(row => {
-                const date = row.getAttribute('data-date');
+                const bsDate = row.dataset.date;
+                const adDate = row.querySelector('.ad-date-input').value;
+                //data lai send garene structure ma
+                const adInput = document.createElement('input');
+                adInput.type = 'hidden';
+                adInput.name = `data[${bsDate}][ad_date]`;
+                adInput.value = adDate;
+                this.appendChild(adInput);
                 row.querySelectorAll('.editable').forEach(td => {
                     const field = td.getAttribute('data-field');
                     const input = td.querySelector('input');
                     const value = input ? input.value.trim() : td.innerText.trim();
                     const hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
-                    hiddenInput.name = `data[${date}][${field}]`;
+                    hiddenInput.name = `data[${bsDate}][${field}]`;
                     hiddenInput.value = value;
                     document.getElementById('monthForm').appendChild(hiddenInput);
                 });
@@ -192,7 +234,11 @@
 
                 const date = row.dataset.date;
                 const apiDay = data[date];
-                if (!apiDay) return;
+                if (!apiDay) {
+                    row.querySelector('editable').forEach(td => {
+                        td.innerText = '';
+                    });
+                }
                 row.querySelector('[data-field="event"]').innerText = apiDay.date !== '--' ? apiDay.date : '';
                 row.querySelector('[data-field="holiday"]').innerText = apiDay.holiday ? 'Yes' : '';
                 row.querySelector('[data-field="extra_event"]').innerText = apiDay.event || '';

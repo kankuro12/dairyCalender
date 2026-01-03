@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 use Pratiksh\Nepalidate\Services\NepaliDate;
 use Illuminate\Support\Facades\Http;
 use carbon\carbon;
-
+use App\Models\CalendarEvent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CalendarController extends Controller
 {
@@ -41,10 +42,29 @@ $NepaliDate=NepaliDate::create(\Carbon\Carbon::now())->toBS(); // 2082-02-04
     }
     public function addMonthData(Request $request, $month){
         if($request->isMethod('post')){
-            // Process the submitted data for the specified month
-            $data = $request->all();
-            // Save the data logic here
-            dd($data, $month);
+     
+
+         foreach($request ->input('data',[]) as $bsDate =>$payload){
+            [$bsYear , $bsMonth, $bsDay] = array_map('intval', explode('-', $bsDate));
+            CalendarEvent::updateOrCreate(
+                [
+                    'bs_year'=>$bsYear,
+                    'bs_month'=>$bsMonth,
+                    'bs_day'=>$bsDay,
+                ],
+                [
+                    'ad_date'=>$payload['ad_date'],
+                    'title'=>$payload['event'] ?? '',
+                    'tithi'=>$payload['date_text'] ?? null,
+                    'is_holiday'=>!empty($payload['holiday']),
+                    'holiday_type'=>$payload['holiday_type'] ?? null,
+                    'extra_events'=>$payload['extra_event'] ? json_encode($payload['extra_event']) : null,
+                    'notes'=>$payload['notes'] ?? null,
+                ]
+                );
+         }
+         return back()->with('success','Month data saved successfully.');
+        
         }
         $response= Http::get('http://localhost:3000/api/calendar/summary');
         if($response->failed()){
@@ -60,9 +80,19 @@ $NepaliDate=NepaliDate::create(\Carbon\Carbon::now())->toBS(); // 2082-02-04
          $normalizedKey= sprintf('%d-%d-%d',$y,(int)$m,(int)$d);
          return [$normalizedKey => $day];
         });
+        $daysInMonth =$request->query('days');
+        $year=$request->query('year');
+
+        $events = DB::table('calendar_events')->where('bs_year', $year)
+            ->where('bs_month', $month)
+            ->get()
+            ->keyBy(function ($item) {
+                return sprintf('%d-%d-%d', $item->bs_year, (int)$item->bs_month, (int)$item->bs_day);
+            });
+           
         // Display the form to add data for the specified month
-        return view('backend.month_data', ['month' => $month
-        , 'data' => $dayByDate]);
+        return view('backend.month_data', ['month' => $month,'events' => $events
+        , 'daysInMonth' => $daysInMonth, 'data' => $dayByDate, 'year' => $year]);
     }
     public function showMonthData($month){
         $response=Http::get('http://localhost:3000/api/calendar/summary');
