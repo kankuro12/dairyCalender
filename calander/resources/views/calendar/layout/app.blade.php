@@ -11,6 +11,8 @@
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ asset('css/app/nepalidate/date.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app/index.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
     <style>
         * {
             margin: 0;
@@ -31,7 +33,7 @@
             align-items: center;
             padding: 0 40px;
             border-bottom: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 4px rgba(243, 235, 235, 0.05);
             position: relative;
         }
 
@@ -43,27 +45,47 @@
         }
 
         .logo-icon {
-            width: 45px;
-            height: 45px;
-            background-color: #dc2626;
+            width: clamp(36px, 5vw, 45px);
+            height: clamp(36px, 5vw, 45px);
+            flex: 0 0 auto;
+
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 4px;
+            border-radius: 6px;
             color: white;
             font-weight: 700;
-            font-size: 12px;
+            font-size: clamp(10px, 1.2vw, 12px);
             text-align: center;
             line-height: 1.2;
             padding: 4px;
+            overflow: hidden;
+        }
+
+        /* When using an uploaded logo image, allow a wider logo without distortion */
+        .logo-icon.logo-icon--image {
+            width: auto;
+            height: clamp(34px, 5vw, 44px);
+            padding: 0;
+            background: transparent;
+            overflow: visible;
+        }
+
+        .logo-icon.logo-icon--image .site-logo {
+            height: 100%;
+            width: auto;
+            max-width: clamp(120px, 18vw, 220px);
+            object-fit: contain;
+            display: block;
         }
 
         .logo-text {
-            font-size: 20px;
+            font-size: clamp(16px, 2.2vw, 20px);
             font-weight: 700;
-            color: #1a1a1a;
+          
             text-decoration: none;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
 
         .nav-center {
@@ -182,11 +204,14 @@
         }
 
         .date-banner {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+          
             color: white;
             padding: 40px 20px;
             position: relative;
             overflow: hidden;
+            display: flex;
+            gap: 16px;
+            align-items: center;
         }
 
         .date-banner::before {
@@ -205,6 +230,92 @@
             z-index: 1;
             max-width: 1400px;
             margin: 0 auto;
+            flex: 0 0 25%;
+            min-width: 0;
+        }
+        .ads-slider {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex: 0 0 75%;
+            text-align: center;
+            min-width: 0;
+            opacity: 0;
+            transition: opacity 180ms ease-in-out;
+        }
+
+        .ads-slider.is-ready {
+            opacity: 1;
+        }
+
+        /* Hide slider until full page load + slick init */
+        .ads-slider {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .ads-slider.is-ready {
+            opacity: 1;
+        }
+
+        .ads-slider .ad-item {
+            display: none;
+        }
+
+        .ads-slider.slick-initialized .ad-item {
+            display: block;
+        }
+
+        .ads-slider .ad-item {
+            width: 100%;
+        }
+
+        .ads-slider .ad-item img {
+            width: 100%;
+            height: clamp(90px, 18vw, 160px);
+            object-fit: cover;
+            display: block;
+            border-radius: 10px;
+        }
+
+        .ads-slider .slick-slide {
+            padding: 0 10px;
+        }
+
+        .ads-slider .slick-list {
+            margin: 0 -10px;
+        }
+
+        @media (max-width: 992px) {
+            .date-banner {
+                padding: 28px 16px;
+            }
+            .date-content {
+                flex: 0 0 35%;
+            }
+            .ads-slider {
+                flex: 0 0 65%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 16px;
+            }
+            .date-banner {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .date-content,
+            .ads-slider {
+                flex: 0 0 auto;
+                width: 100%;
+                max-width: none;
+            }
+            .ads-slider .ad-item img {
+                height: clamp(120px, 35vw, 180px);
+            }
         }
 
         .nepali-date {
@@ -259,14 +370,16 @@
             max-width: 1400px;
             margin: 0 auto;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
+            gap: 16px;
         }
 
         .calendar-title {
             font-size: 18px;
             font-weight: 600;
             color: #6b7280;
+            flex: 0 0 auto;
         }
 
         .search-box {
@@ -427,6 +540,14 @@
                 font-size: 10px;
             }
 
+            .logo-icon.logo-icon--image {
+                height: 34px;
+            }
+
+            .logo-icon .site-logo {
+                max-width: 140px;
+            }
+
             .logo-text {
                 font-size: 16px;
             }
@@ -485,10 +606,18 @@
     <nav class="nav">
         <!-- Logo Section -->
         <div class="logo">
-            <div class="logo-icon">
-                हाम्रो<br>पात्रो
+            <div class="logo-icon {{ setting('logo_image') ? 'logo-icon--image' : '' }}">
+                @if(setting('logo_image'))
+                    <img
+                        src="{{ getLogo() }}"
+                        alt="Site Logo"
+                        class="site-logo"
+                        loading="eager"
+                        decoding="async"
+                    >
+                @endif
             </div>
-            <a href="/" class="logo-text">HAMRO PATRO</a>
+            <a href="/" class="logo-text" style="color:{{ setting('logo_color') }}">{{ setting('site_name') ?? 'null' }}</a>
         </div>
 
         <!-- Hamburger Menu Icon -->
@@ -501,7 +630,7 @@
         <!-- Navigation Links -->
         <div class="nav-center" id="navCenter">
             <ul class="nav-links">
-                <li><a href="#">Remit</a></li>
+                <li><a href="#">{{__('site.home') }}</a></li>
                 <li><a href="#">Mart</a></li>
                 <li><a href="#">Gifts</a></li>
                 <li><a href="#">Recharge</a></li>
@@ -519,7 +648,12 @@
         @include('calendar.layout.partials.message')
         <!-- Right Section with Language Button and User Icon -->
         <div class="nav-right">
-            <button class="language-btn">EN</button>
+      @if(app()->getLocale() === 'en')
+    <a href="{{ route('lang.switch', ['locale' => 'np']) }}" class="language-btn">NP</a>
+@else
+    <a href="{{ route('lang.switch', ['locale' => 'en']) }}" class="language-btn">EN</a>
+@endif
+
             <div class="user-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
@@ -560,6 +694,8 @@
     <script src="{{ asset('js/date.js') }}"></script>
     <script src="https://nepalidatepicker.sajanmaharjan.com.np/nepali.datepicker/js/nepali.datepicker.v5.0.6.min.js"
         type="text/javascript"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    @stack('scripts')
     <script>
         window.onload = function() {
             var input = document.getElementById("nepali-datepicker");

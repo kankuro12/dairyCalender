@@ -4,7 +4,7 @@
 
     <div class='items'>
         <div class="module">
-            <h2><span><a href="#upcomingDays" class="headderNew">Upcoming Days</a></span></h2>
+            <h2><span><a href="#upcomingDays" class="headderNew">{{ __('site.Upcoming Days') }}</a></span></h2>
             <ul class="upcomming-days scroll" tableindex="0" style="outline: none;">
                 <li class ="clearfix">
                     <div class="date">
@@ -129,12 +129,12 @@
             </ul>
         </div>
         <div class="dateConverter">
-            <h3>Date Converter</h3>
+            <h3>{{ __('site.Date') }} {{ __('site.Converter') }}</h3>
             <input type="radio" id="nepaliToEnglish" name="conversionType" value="nepaliToEnglish" checked>
-            <label for="nepaliToEnglish">नेपाली मिति देखि अङ्ग्रेजी </label>
+            <label for="nepaliToEnglish">{{ __('site.Nepali to English') }} </label>
             <br>
             <input type="radio" id="englishToNepali" name="conversionType" value="englishToNepali">
-            <label for="englishToNepali">अङ्ग्रेजी मिति देखि नेपाली</label>
+            <label for="englishToNepali">{{ __('site.English to Nepali') }}</label>
             <br>
 
             <div class="converter-inputs">

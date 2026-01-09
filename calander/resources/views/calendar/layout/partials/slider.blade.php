@@ -1,5 +1,5 @@
 <div class="slider-container">
-    <h2 class="slider-header">Nepali News</h2>
+    <h2 class="slider-header">{{ __('site.Nepali') }} {{ __('site.News') }}</h2>
 
     <div class="slider-wrapper">
         <button class="nav-button nav-prev" id="prevBtn">
