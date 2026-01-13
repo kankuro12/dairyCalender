@@ -310,23 +310,35 @@
     }
 
 
+
     .calendar-dates li.disabled {
         opacity: 0.4;
         pointer-events: none;
     }
 
-    .calendar-dates li.todat {
+    .calendar-dates li.today {
         background: #b71c1c;
         color: #fff;
     }
 
     .calendar-dates li.saturday {
-        background: #fce4e4;
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .calendar-dates li.saturday span {
+        color: #dc3545 !important;
     }
 
     .calendar-dates li.today.saturday {
         background: #8e0000;
         color: #fff;
+    }
+
+    .calendar-dates li.saturday:hover span {
+        color: #fff !important;
+
+
     }
 
     .calendar-dates li.holiday {
@@ -434,25 +446,31 @@
     /* holidays card */
     .holidayscard {
         margin-top: 10px;
-        padding: 12px;
-        background: #fff;
-        border: 1px solid #eee;
-        border-radius: 6px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-        max-width: none;
+        padding: 14px;
+        background: #ffffff;
+        border: 1px solid #f0e6e8;
+        border-radius: 10px;
+        box-shadow: 0 12px 30px rgba(183, 29, 29, 0.08);
+        max-width: 380px;
+        min-width: 260px;
         display: none;
         position: absolute;
         top: calc(100% + 8px);
-        left: 0;
         right: 0;
         z-index: 2000;
+        overflow: hidden;
+        overflow-y: auto;
+        max-height: 360px;
     }
 
     .holidayscard h3 {
-        margin: 0 0 10px;
-        font-size: 14px;
-        font-weight: 700;
+        margin: 0 0 12px;
+        font-size: 15px;
+        font-weight: 800;
         color: #b71d1d;
+        padding: 6px 8px;
+        background: #fff1f3;
+        border-radius: 6px;
     }
 
     .holidayscard ul {
@@ -463,11 +481,14 @@
 
     .holidayscard li {
         display: flex;
+        flex-direction: column;
         align-items: flex-start;
-        justify-content: space-between;
-        gap: 10px;
-        padding: 10px 0;
-        border-top: 1px solid #eee;
+        gap: 6px;
+        padding: 10px 8px;
+        border-top: 1px solid #f4e9ea;
+        white-space: normal;
+        line-height: 1.3;
+        word-break: break-word;
     }
 
     .holidayscard li:first-child {
@@ -480,18 +501,70 @@
     }
 
     .holidayscard .date {
-        font-size: 12px;
-        color: #333230;
-        line-height: 1.3;
-        flex: 1;
-        min-width: 0;
+        font-size: 13px;
+        color: #4a4a48;
+        line-height: 1.25;
+        width: 100%;
+        display: block;
+        margin-bottom: 4px;
     }
 
     .holidayscard .holiday-name {
-        font-size: 12px;
-        font-weight: 700;
+        font-size: 14px;
+        font-weight: 800;
         color: #b71d1d;
-        white-space: nowrap;
+        width: 100%;
+        display: block;
+        margin-top: 2px;
+    }
+
+    /* small screens: make the card full width under the button */
+    @media (max-width: 720px) {
+        .cta-button a {
+            padding: 6px 8px;
+            font-size: 11px;
+        }
+
+        .holidayscard {
+            left: 8px;
+            right: 8px;
+            width: auto;
+            max-width: calc(100vw - 32px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            position: fixed;
+            top: auto;
+            bottom: 12px;
+            transform: none;
+            padding: 10px;
+            max-height: 55vh;
+        }
+
+        .holidayscard h3 {
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .holidayscard li {
+            flex-direction: column;
+            gap: 6px;
+            padding: 8px 6px;
+        }
+
+        .holidayscard .date {
+            flex: none;
+            font-size: 12px;
+        }
+
+        .holidayscard .holiday-name {
+            text-align: left;
+            font-size: 13px;
+        }
+    }
+
+    .holidayscard .empty {
+        text-align: center;
+        color: #777;
+        padding: 12px 0;
     }
 
     /* .popup-box.mobile {

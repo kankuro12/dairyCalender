@@ -289,7 +289,7 @@
   margin: 0 auto;
   padding: 0;
   list-style: none;
-  background: #fafafa;
+  background: rgba(3, 63, 153, 0.6784313725);
   border: 1px solid #ebebeb;
 }
 .calendar .responsive {
@@ -306,12 +306,12 @@
 .calendar .calendar-days .np {
   display: block;
   font-size: 14px;
-  color: #666;
+  color: #ffffff;
 }
 .calendar .calendar-days .en {
   display: block;
   font-size: 11px;
-  color: #9a9a9a;
+  color: #dbdbdb;
 }
 
 .calendar {
@@ -342,8 +342,8 @@
   justify-items: center;
 }
 .calendar ul.calendar-dates li:hover {
-  background: #093052;
-  color: #fff;
+  background: #dc3545;
+  color: #fff !important;
 }
 .calendar .calendar-dates .nep {
   font-size: 34px;
@@ -361,14 +361,14 @@
 }
 .calendar .calendar-dates .event {
   font-size: 11px;
-  color: #666;
+  color: #1e1e1e;
   display: block;
   margin-bottom: 4px;
   min-height: 14px;
 }
 .calendar .calendar-dates .tithi {
   font-size: 11px;
-  color: #777;
+  color: #504f4f;
   display: block;
 }
 .calendar .calendar-dates li.today {

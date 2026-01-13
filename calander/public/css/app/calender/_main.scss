@@ -24,8 +24,8 @@
         }
 
         ul.calendar-dates li:hover {
-            background: #093052;
-            color: #fff;
+            background: #dc3545;
+            color: #fff !important;
         }
 
         .calendar-dates .nep {
@@ -46,7 +46,7 @@
 
         .calendar-dates .event {
             font-size: 11px;
-            color: #666;
+            color: #1e1e1e;
             display: block;
             margin-bottom: 4px;
             min-height: 14px;
@@ -54,7 +54,7 @@
 
         .calendar-dates .tithi {
             font-size: 11px;
-            color: #777;
+            color: #504f4f;
             display: block;
         }
 

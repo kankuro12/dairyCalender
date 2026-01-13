@@ -263,7 +263,7 @@ function renderCalendarEvents(events) {
         }
 
         if (eventData?.is_holiday) {
-            cell.classList.add('holiday');
+            cell.classList.add('saturday');
         }
 
     });
@@ -689,15 +689,43 @@ function renderHolidaysCard(events) {
     if (holidaysBtn._holidaysBound) return;
     holidaysBtn._holidaysBound = true;
 
+    function closeHolidaysCard() {
+        holidaysCard.style.display = 'none';
+        if (holidaysBtn._holidaysOutsideHandler) {
+            document.removeEventListener('click', holidaysBtn._holidaysOutsideHandler, true);
+            holidaysBtn._holidaysOutsideHandler = null;
+        }
+    }
+
+    function bindOutsideToClose() {
+        if (holidaysBtn._holidaysOutsideHandler) return;
+        holidaysBtn._holidaysOutsideHandler = function (ev) {
+            const clickedOnBtn = holidaysBtn.contains(ev.target);
+            const clickedInCard = holidaysCard.contains(ev.target);
+            if (!clickedOnBtn && !clickedInCard) {
+                closeHolidaysCard();
+            }
+        };
+        // Defer binding so the opening click doesn't immediately close it
+        setTimeout(() => {
+            document.addEventListener('click', holidaysBtn._holidaysOutsideHandler, true);
+        }, 0);
+    }
+
     // Start hidden
-    holidaysCard.style.display = 'none';
+    closeHolidaysCard();
 
     holidaysBtn.addEventListener('click', function (e) {
         e.preventDefault();
 
         const isVisible = window.getComputedStyle(holidaysCard).display !== 'none';
-        holidaysCard.style.display = isVisible ? 'none' : 'block';
-        if (isVisible) return;
+        if (isVisible) {
+            closeHolidaysCard();
+            return;
+        }
+
+        holidaysCard.style.display = 'block';
+        bindOutsideToClose();
 
         holidaysList.innerHTML = '';
 
@@ -738,16 +766,20 @@ function renderHolidaysCard(events) {
                 ? adDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
                 : '';
 
+            // Title fallback order: title, holiday_title, name
+            const titleText = (event && (event.title || event.holiday_title || event.name)) || '';
+
             const li = document.createElement('li');
-            li.innerHTML = `
-                <span class="date">
-                    ${NepaliFunctions.ConvertToUnicode(day)}
-                    ${NepaliFunctions.BS.GetMonthInUnicode(month - 1)}
-                    ${NepaliFunctions.ConvertToUnicode(year)}
-                    ${adText ? ` | ${adText}` : ''}
-                </span>
-                <span class="holiday-name">${event && event.title ? event.title : ''}</span>
-            `;
+            const dateSpan = document.createElement('span');
+            dateSpan.className = 'date';
+            dateSpan.textContent = `${NepaliFunctions.ConvertToUnicode(day)} ${NepaliFunctions.BS.GetMonthInUnicode(month - 1)} ${NepaliFunctions.ConvertToUnicode(year)}${adText ? ' | ' + adText : ''}`;
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'holiday-name';
+            nameSpan.textContent = titleText;
+
+            li.appendChild(dateSpan);
+            li.appendChild(nameSpan);
             holidaysList.appendChild(li);
         });
 
