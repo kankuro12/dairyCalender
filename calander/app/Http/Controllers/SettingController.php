@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Setting;
 use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
 
 class SettingController extends Controller
 {
@@ -16,7 +15,22 @@ class SettingController extends Controller
 
     public function __construct()
     {
-        $this->image = new ImageManager(new Driver());
+        // Use Imagick if available, otherwise fallback to GD
+        // Imagick is preferred as it has better format support
+        if (extension_loaded('imagick')) {
+            $this->image = new ImageManager(\Intervention\Image\Drivers\Imagick\Driver::class);
+        } else {
+            // Check GD JPEG support before using GD driver
+            $gdInfo = gd_info();
+            $hasJpegSupport = isset($gdInfo['JPEG Support']) && $gdInfo['JPEG Support'];
+            
+            if (!$hasJpegSupport) {
+                // If GD doesn't have JPEG support, we'll need to handle this in processImage
+                \Log::warning('GD library does not have JPEG support. Some image formats may not work correctly.');
+            }
+            
+            $this->image = new ImageManager(\Intervention\Image\Drivers\Gd\Driver::class);
+        }
     }
 
     /* ===============================
@@ -55,32 +69,33 @@ class SettingController extends Controller
             'logo_color' => 'nullable|regex:/^#([0-9a-fA-F]{6})$/',
             'logo_color_hex' => 'nullable|regex:/^#([0-9a-fA-F]{6})$/',
 
-            'logo_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'logo_image' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
             'remove_logo_image' => 'nullable|boolean',
         ]);
 
-        /* ---- text settings ---- */
         foreach (['site_name', 'contact_phone', 'contact_email', 'contact_address'] as $key) {
             Setting::setValue($key, $validated[$key] ?? null);
         }
 
-        /* ---- logo color ---- */
         $color = $validated['logo_color'] ?? $validated['logo_color_hex'] ?? null;
         Setting::setValue('logo_color', $color);
         Setting::setValue('logo_color_hex', $color);
 
         Cache::forget('settings');
+        Cache::forget('sliders');
 
-            Cache::forget('sliders');
-
-        /* ---- logo image ---- */
-        $this->handleLogo($request);
-
-        /* ---- sliders ---- */
-        $this->handleSliders($request);
+        try {
+            $this->handleLogo($request);
+            $this->handleSliders($request);
+        } catch (\RuntimeException $e) {
+            return redirect()
+                ->route('admin.events.logo')
+                ->withErrors(['image' => $e->getMessage()])
+                ->withInput();
+        }
 
         return redirect()
-            ->route('events.logo')
+            ->route('admin.events.logo')
             ->with('success', 'Settings saved successfully');
     }
 
@@ -105,8 +120,8 @@ class SettingController extends Controller
 
         $path = $this->processImage(
             $request->file($key),
-            300,     // logo width
-            90       // logo quality
+            300, // logo width
+            90   // logo quality
         );
 
         Setting::setValue($key, $path);
@@ -131,7 +146,7 @@ class SettingController extends Controller
 
         $rules = [];
         foreach ($keys as $key) {
-            $rules[$key] = 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096';
+            $rules[$key] = 'nullable|image|mimes:jpg,jpeg,png|max:4096';
             $rules['remove_' . $key] = 'nullable|boolean';
         }
 
@@ -152,8 +167,8 @@ class SettingController extends Controller
 
             $path = $this->processImage(
                 $request->file($key),
-                1200,   // slider width
-                80      // slider quality
+                1200, // slider width
+                80    // slider quality
             );
 
             Setting::setValue($key, $path);
@@ -164,19 +179,62 @@ class SettingController extends Controller
     }
 
     /* ===============================
-     * IMAGE PROCESSOR (INTERVENTION)
+     * DEPLOYMENT-SAFE IMAGE HANDLER
+     * (GD only | PNG fallback if JPEG not supported)
      * =============================== */
     private function processImage($file, int $width, int $quality): string
     {
-        $filename = uniqid() . '.webp';
+        // Check GD capabilities
+        $gdInfo = gd_info();
+        $hasJpegSupport = isset($gdInfo['JPEG Support']) && $gdInfo['JPEG Support'];
+        $hasPngSupport = isset($gdInfo['PNG Support']) && $gdInfo['PNG Support'];
+        
+        if (!$hasPngSupport) {
+            throw new \RuntimeException('GD library does not support PNG format. Please install PNG support for GD.');
+        }
+
+        // Detect the input file type
+        $mimeType = $file->getMimeType();
+        $isJpeg = in_array($mimeType, ['image/jpeg', 'image/jpg']);
+        
+        // If input is JPEG but JPEG support is not available, we cannot process it
+        if ($isJpeg && !$hasJpegSupport) {
+            throw new \RuntimeException(
+                'Cannot process JPEG image. GD library does not have JPEG support. ' .
+                'Please convert your image to PNG format before uploading, or install JPEG support for GD. ' .
+                'On Windows, you may need to enable JPEG support in php.ini or install a PHP build with JPEG support compiled in.'
+            );
+        }
+
+        // Determine output format: use JPEG if supported, otherwise PNG
+        $ext = $hasJpegSupport ? 'jpg' : 'png';
+        $filename = uniqid() . '.' . $ext;
         $path = 'settings/' . $filename;
 
-        $image = $this->image
-            ->read($file)
-            ->scaleDown($width)
-            ->toWebp($quality);
+        try {
+            // Use read() instead of make() in v3
+            $image = $this->image
+                ->read($file->getRealPath())
+                ->resize($width, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->encode($ext, $quality);
 
-        Storage::disk('public')->put($path, (string) $image);
+            Storage::disk('public')->put($path, (string) $image);
+        } catch (\Exception $e) {
+            // If reading fails (e.g., trying to read JPEG without support), provide helpful error
+            if (strpos($e->getMessage(), 'imagecreatefromjpeg') !== false || $isJpeg) {
+                throw new \RuntimeException(
+                    'Cannot process JPEG image. GD library does not have JPEG support. ' .
+                    'Please convert your image to PNG format before uploading, or install JPEG support for GD. ' .
+                    'Original error: ' . $e->getMessage()
+                );
+            }
+            
+            // For other errors, rethrow as-is
+            throw $e;
+        }
 
         return $path;
     }

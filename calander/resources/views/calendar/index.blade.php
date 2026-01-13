@@ -206,8 +206,8 @@
             </ul>
             <ul class="calendar-dates">
                 @for ($i = 0; $i < 42; $i++)
-                    <li onclick="openPopUp('0')" class="calendar-cell"">
-                        <span style=display:none;></span>
+                    <li class="calendar-cell">
+                        {{-- <li onclick="openCalendarPopup(this )" class="calendar-cell"> {{-- <span style=display:none;></span> --}}
                         <span class="event">---</span>
                         <span class="nep">१</span>
                         <span class="tithi"></span>
@@ -217,7 +217,7 @@
                         {{-- <span class="eng">
                        
                     </span> --}}
-                        <div class="popup-box daydetailsPopOverWrapper" id="daypop"
+                        {{-- <div class="popup-box daydetailsPopOverWrapper" id="daypop"
                             style="opacity:1;overflow:hidden;display:hidden;">
                             <span class="arrow"></span>
                             <span class="popup-close closeButon">
@@ -229,21 +229,8 @@
                                         <span style="font-weight:900"> --date-- </span>
 
                                     </div>
-                                    <div class="col2" style="border:none;text-align:left;padding-left:15px">
-                                        --eng date--
-                                        <br>
-                                    </div>
-                                    <div class="col13" style="border:none">
-                                        <div class="panchangaWrapper">
-                                            --panchanga details--
-                                            <br>
-                                            --more details--
-                                        </div>
-                                        <br>
-                                        <div class="eventPopupWrapper">
-                                            <a style="color:#333230;text-decoration:underline; cursor:pointer;"
-                                                href="#events">--event details--</a>
-                                        </div>
+                                                    <h3 id="holidaysTitle">Holidays</h3>
+                                                    <ul id="holidaysList"></ul>
                                         <h3 class="viewDetails"><a href="/details" style="color:049ffc;"
                                                 href="/date/2082-09-02" onclick="viewevents('2082-09-02');">View
                                                 Details</a></h3>
@@ -271,7 +258,7 @@
                                     </h5>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </li>
                 @endfor
 
@@ -282,13 +269,38 @@
 
 
             </ul>
+            <div class="popup-box" id="calendarPopup">
+                <div class="popup-header">
+                    <span id="popup-title"></span>
+                    <button class="popup-close">&times;</button>
+                </div>
+
+                <div class="popup-body">
+                    <div class="panchangaWrapper"></div>
+
+                    <div class="eventPopupWrapper"></div>
+
+                    <div class="notes">
+                        <h4>मेरो नोट</h4>
+                        <div class="notes-content"></div>
+                        <a class="edit-note">Add / Edit Note</a>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </div>
     <div class='items'>
         <div class="cta-button">
-            <a href="#/" target="_self" class="holidays">Holidays</a>
+            <a href="#/" target="_self" class="holidays" id="holidays">Holidays</a>
+
+            <div class="holidayscard">
+                <h3 id="holidaysTitle">Holidays</h3>
+                <ul id="holidaysList"></ul>
+            </div>
         </div>
+
 
     </div>
 </div>
@@ -312,8 +324,18 @@
         background: #fce4e4;
     }
 
-    .calendar-tades li.today.saturday {
-        bakground: #8e0000;
+    .calendar-dates li.today.saturday {
+        background: #8e0000;
+        color: #fff;
+    }
+
+    .calendar-dates li.holiday {
+        background: #fce4e4;
+    }
+
+    .calendar-dates li.today.holiday {
+
+        background: #8e0000;
         color: #fff;
     }
 
@@ -343,6 +365,11 @@
         align-items: center;
         text-transform: uppercase;
 
+    }
+
+    .cta-button {
+        position: relative;
+        width: 100%;
     }
 
     .holidays {
@@ -381,4 +408,94 @@
         }
 
         */
+    /* popup styles */
+
+    .popup-box {
+        position: absolute;
+        display: none;
+        width: 300px;
+        background: #fff;
+        border-radius: 6px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        z-index: 1000;
+    }
+
+    .popup-header {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .popup-body {
+        padding: 12px;
+    }
+
+    /* holidays card */
+    .holidayscard {
+        margin-top: 10px;
+        padding: 12px;
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 6px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        max-width: none;
+        display: none;
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        right: 0;
+        z-index: 2000;
+    }
+
+    .holidayscard h3 {
+        margin: 0 0 10px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #b71d1d;
+    }
+
+    .holidayscard ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .holidayscard li {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 0;
+        border-top: 1px solid #eee;
+    }
+
+    .holidayscard li:first-child {
+        border-top: none;
+        padding-top: 0;
+    }
+
+    .holidayscard li:last-child {
+        padding-bottom: 0;
+    }
+
+    .holidayscard .date {
+        font-size: 12px;
+        color: #333230;
+        line-height: 1.3;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .holidayscard .holiday-name {
+        font-size: 12px;
+        font-weight: 700;
+        color: #b71d1d;
+        white-space: nowrap;
+    }
+
+    /* .popup-box.mobile {
+        height: 70vh;
+        border-radius: 16px 16px 0 0;
+    } */
 </style>

@@ -3,15 +3,16 @@
         <div class="calendar-title">{{ __('site.Nepali') }} {{ __('site.Calendar') }} 2082</div>
 
         <div class="teleprompter-wrapper" data-teleprompter data-speed="90" aria-label="Announcements">
-            @if(!$announcements->isEmpty())
+            @if (!$announcements->isEmpty())
                 <div class="teleprompter-track" data-track>
                     <div class="teleprompter-content" data-content>
-                        @foreach($announcements as $a)
+                        @foreach ($announcements as $a)
                             <span class="announcement-item">
                                 <span class="type {{ $a->type }}">{{ strtoupper($a->type) }}:</span>
                                 <span class="announcement-title">{{ $a->title }}</span>
                             </span>
-                            <span class="announcement-sep" aria-hidden="true">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+                            <span class="announcement-sep"
+                                aria-hidden="true">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
                         @endforeach
                     </div>
                 </div>
@@ -32,7 +33,7 @@
         position: absolute;
         left: 0;
         top: 50%;
-        transform: translate3d(0, -50%, 0);
+        transform: translate3d(0, -50%, 0%);
         display: inline-flex;
         white-space: nowrap;
         will-change: transform;
@@ -66,20 +67,27 @@
         margin-right: 4px;
     }
 
-    .type.news { color: #1d4ed8; }
-    .type.announcement { color: #dc2626; }
-    .type.alert { color: #f59e0b; }
+    .type.news {
+        color: #1d4ed8;
+    }
+
+    .type.announcement {
+        color: #dc2626;
+    }
+
+    .type.alert {
+        color: #f59e0b;
+    }
 
     @media (prefers-reduced-motion: reduce) {
         /* Keep readable (user can still see it). We don't force-stop JS here. */
     }
+</style>
 
-    </style>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
         const wrappers = document.querySelectorAll('[data-teleprompter]');
-        wrappers.forEach(function (wrapper) {
+        wrappers.forEach(function(wrapper) {
             const track = wrapper.querySelector('[data-track]');
             const content = wrapper.querySelector('[data-content]');
             if (!track || !content) return;
@@ -106,7 +114,9 @@
                 measure();
                 if (contentWidth > 0) return true;
                 if (triesLeft <= 0) return false;
-                setTimeout(function () { ensureMeasured(triesLeft - 1); }, 50);
+                setTimeout(function() {
+                    ensureMeasured(triesLeft - 1);
+                }, 50);
                 return false;
             }
 
@@ -138,16 +148,15 @@
 
             // Keep it correct on resize (mobile rotation etc.)
             if (window.ResizeObserver) {
-                const ro = new ResizeObserver(function () {
+                const ro = new ResizeObserver(function() {
                     measure();
                 });
                 ro.observe(wrapper);
             } else {
-                window.addEventListener('resize', function () {
+                window.addEventListener('resize', function() {
                     measure();
                 });
             }
         });
     });
 </script>
-

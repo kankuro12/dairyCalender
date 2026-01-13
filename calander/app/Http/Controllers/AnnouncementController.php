@@ -34,7 +34,7 @@ class AnnouncementController extends Controller
         Cache::forget('announcement_bar');
 
         return redirect()
-            ->route('announcements.index')
+            ->route('admin.announcements.index')
             ->with('success', 'Announcement created successfully');
     }
 
@@ -47,7 +47,7 @@ class AnnouncementController extends Controller
         Cache::forget('announcement_bar');
 
         return redirect()
-            ->route('announcements.index')
+            ->route('admin.announcements.index')
             ->with('success', 'Announcement updated successfully');
     }
 
@@ -58,7 +58,7 @@ class AnnouncementController extends Controller
         Cache::forget('announcement_bar');
 
         return redirect()
-            ->route('announcements.index')
+            ->route('admin.announcements.index')
             ->with('success', 'Announcement deleted successfully');
     }
 

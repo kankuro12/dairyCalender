@@ -203,7 +203,8 @@ function renderCalendar(bsYear, bsMonth) {
     // }
     for (let i = 0; i < 42; i++) {
         const cell = cells[i];
-
+        cell.classList.remove('disabled', 'today', 'saturday', 'holiday');
+        cell.classList.add('calendar-cell');
         const adDate = new Date(gridStartAdDate);
         adDate.setDate(gridStartAdDate.getDate() + i);
         const adObj = {
@@ -225,7 +226,8 @@ function renderCalendar(bsYear, bsMonth) {
             bs.month === today.month &&
             bs.day === today.day;
         const isSaturday = i % 7 === 6;
-        cell.className = "";
+        // cell.className = "";
+
         if (!isCurrentMonth) {
             cell.classList.add('disabled');
         }
@@ -246,7 +248,6 @@ function renderCalendar(bsYear, bsMonth) {
 }
 function renderCalendarEvents(events) {
     const todayBs = NepaliFunctions.BS.GetCurrentDate();
-    const upcomingDate = document.querySelector('.upcomming-days');
     document.querySelectorAll('.calendar-dates li').forEach(cell => {
         const bsDate = cell.dataset.bsDate;
         if (!bsDate || !events[bsDate]) return;
@@ -264,28 +265,88 @@ function renderCalendarEvents(events) {
         if (eventData?.is_holiday) {
             cell.classList.add('holiday');
         }
-        const [year, month, day] = bsDate.split('-').map(Number);
-        const isAfterToday = year > todayBs.year ||
-            (year === todayBs.year && month > todayBs.month) ||
-            (year === todayBs.year && month === todayBs.month && day >= todayBs.day);
-        if (isAfterToday && eventData?.is_holiday) {
-            const li = document.createElement('li');
-            li.className = 'clearfix';
-            li.innerHtml = `
-                <div class="date">
-                <span>${NepaliFunctions.ConvertToUnicode(day)}</span>
-                ${NepaliFunctions.BS.GetMonthInUnicode(month - 1)
-                }</div>
-                <div class="info">
-                <span>
-                <a href="#date">${eventData.title}</a>
-                </span>
-                </div>
-                `;
-            upcomingDate.appendChild(li);
-        }
 
     });
+}
+
+let _upcomingEventsCache = {
+    bsYear: null,
+    fromMonth: null,
+    events: null,
+};
+
+function getTodayBsString() {
+    const today = NepaliFunctions.BS.GetCurrentDate();
+    return `${today.year}-${String(today.month).padStart(2, '0')}-${String(today.day).padStart(2, '0')}`;
+}
+
+async function fetchEventsFromTodayToYearEnd() {
+    const today = NepaliFunctions.BS.GetCurrentDate();
+    const bsYear = today.year;
+    const startMonth = today.month;
+
+    if (
+        _upcomingEventsCache.events &&
+        _upcomingEventsCache.bsYear === bsYear &&
+        _upcomingEventsCache.fromMonth === startMonth
+    ) {
+        return _upcomingEventsCache.events;
+    }
+
+    const monthPromises = [];
+    for (let month = startMonth; month <= 12; month++) {
+        monthPromises.push(fetchCalendarData(bsYear, month));
+    }
+
+    const results = await Promise.all(monthPromises);
+    const merged = {};
+    results.forEach(monthEvents => {
+        Object.assign(merged, monthEvents || {});
+    });
+
+    _upcomingEventsCache = {
+        bsYear,
+        fromMonth: startMonth,
+        events: merged,
+    };
+
+    return merged;
+}
+
+function renderUpcomingDays(events) {
+    const upcomingList = document.querySelector('.upcomming-days');
+    if (!upcomingList) return;
+
+    upcomingList.innerHTML = '';
+
+    const todayBsStr = getTodayBsString();
+    const items = Object.keys(events || {})
+        .filter((bsDate) => bsDate >= todayBsStr)
+        .map((bsDate) => ({ bsDate, event: events[bsDate] }))
+        .filter(({ event }) => typeof event?.title === 'string' && event.title.trim().length > 0)
+        .sort((a, b) => a.bsDate.localeCompare(b.bsDate));
+
+    items.forEach(({ bsDate, event }) => {
+        const [year, month, day] = bsDate.split('-').map(Number);
+        const li = document.createElement('li');
+        li.className = 'clearfix';
+        li.innerHTML = `
+            <div class="date">
+                <span>${NepaliFunctions.ConvertToUnicode(day)}</span>
+                ${NepaliFunctions.BS.GetMonthInUnicode(month - 1)}
+            </div>
+            <div class="info">
+                <span>
+                    <a href="#date">${event.title}</a>
+                </span>
+            </div>
+        `;
+        upcomingList.appendChild(li);
+    });
+
+    if (!upcomingList.children.length) {
+        upcomingList.innerHTML = '<li class="clearfix"><div class="info"><span>No upcoming events.</span></div></li>';
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -333,8 +394,16 @@ document.addEventListener('DOMContentLoaded', function () {
         renderCalendar(currentYear, currentMonth);
         dropdownsCalendar(currentYear, currentMonth);
         updateCalendarHeader(currentYear, currentMonth);
+
+        // Bind holidays dropdown immediately (before async fetch completes)
+        renderHolidaysCard({});
         const events = await fetchCalendarData(currentYear, currentMonth);
         renderCalendarEvents(events);
+        renderHolidaysCard(events);
+
+        // Upcoming Days: today -> end of current BS year
+        const upcomingEvents = await fetchEventsFromTodayToYearEnd();
+        renderUpcomingDays(upcomingEvents);
     }
 
 });
@@ -495,4 +564,195 @@ async function fetchCalendarData(bsYear, bsMonth) {
         console.error('Error fetching calendar data:', error);
         return {};
     }
+}
+
+document.querySelector('.calendar-dates').addEventListener('click', e => {
+    const cell = e.target.closest('.calendar-cell');
+    if (!cell || !cell.dataset.bsDate) return;
+    openCalendarPopup(cell);
+})
+
+// function openCalendarPopup(cell) {
+//     const popup = document.getElementById('calendarPopup');
+
+//     popup.querySelector('#popup-title').innerText = cell.dataset.bsDate;
+
+//     const rect = cell.getBoundingClientRect();
+
+//     popup.style.top = window.scrollY + rect.bottom + 8 + 'px';
+//     popup.style.left = window.scrollX + rect.left + 'px';
+
+//     popup.style.display = 'block';
+//     // if (isMobileView()) {
+//     //     positionPopupMobile();
+
+//     // }
+//     alert('Popup opened for ' + cell.dataset.bsDate);
+
+// }
+// function positionPopUpDesktop(cell) {
+//     const popup = document.getElementById('calendarPopup');
+
+//     const rect = cell.getBoundingClientRect();
+
+//     popup.style.top =
+//         rect.top + window.scrollY - popup.offsetHeight - 10 + 'px';
+//     popup.style.left =
+//         rect.left + window.scrollX + rect.width / 2 - popup.offsetWidth / 2 + 'px';
+// }
+// function isMobileView() {
+//     return window.innerWidth <= 768;
+// }
+// function positionPopupMobile() {
+//     const popup = document.getElementById('calendarPopup');
+
+//     popup.classList.add('mobile');
+//     popup.style.position = 'fixed';
+//     popup.style.left = '0';
+//     popup.style.bottom = '0';
+//     popup.style.width = '100%';
+//     popup.style.display = 'block';
+// }
+
+
+function openCalendarPopup(cell) {
+    const popup = document.getElementById('calendarPopup');
+    popup.querySelector('#popup-title').innerText = cell.dataset.bsDate;
+
+    // get cell position relative to viewport
+    const rect = cell.getBoundingClientRect();
+
+    // Ensure popup is measurable (offsetWidth/offsetHeight are 0 when display:none)
+    const previousVisibility = popup.style.visibility;
+    popup.style.display = 'block';
+    popup.style.visibility = 'hidden';
+    popup.style.top = '0px';
+    popup.style.left = '0px';
+
+    const popupWidth = popup.offsetWidth;
+    const popupHeight = popup.offsetHeight;
+
+    const margin = 8;
+    const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+
+    // Position relative to the viewport for consistent behavior regardless of offsetParent
+    popup.style.position = 'fixed';
+
+    // Desired position in *viewport* coordinates
+    const desiredViewportTopAbove = rect.top - popupHeight - margin;
+    const desiredViewportTopBelow = rect.bottom + margin;
+    const hasRoomAbove = desiredViewportTopAbove >= margin;
+    const viewportTop = hasRoomAbove ? desiredViewportTopAbove : desiredViewportTopBelow;
+
+    const desiredViewportLeftCentered = rect.left + rect.width / 2 - popupWidth / 2;
+    const minViewportLeft = margin;
+    const maxViewportLeft = viewportWidth - popupWidth - margin;
+    const viewportLeft = Math.max(minViewportLeft, Math.min(desiredViewportLeftCentered, maxViewportLeft));
+
+    popup.style.top = `${viewportTop}px`;
+    popup.style.left = `${viewportLeft}px`;
+    popup.style.visibility = previousVisibility || '';
+    popup.style.display = 'block';
+
+    // Simple click-outside-to-close (managed from within this function only)
+    if (popup._outsideClickHandler) {
+        document.removeEventListener('click', popup._outsideClickHandler, true);
+    }
+    popup._outsideClickHandler = function (e) {
+        const clickedInsidePopup = popup.contains(e.target);
+        const clickedOnCell = cell.contains(e.target);
+        if (!clickedInsidePopup && !clickedOnCell) {
+            popup.style.display = 'none';
+            document.removeEventListener('click', popup._outsideClickHandler, true);
+            popup._outsideClickHandler = null;
+        }
+    };
+    // Defer binding to avoid immediately closing on the opening click event
+    setTimeout(() => {
+        document.addEventListener('click', popup._outsideClickHandler, true);
+    }, 0);
+}
+function renderHolidaysCard(events) {
+    const holidaysBtn = document.getElementById('holidays');
+    const holidaysCard = document.querySelector('.holidayscard');
+
+    if (!holidaysBtn || !holidaysCard) return;
+
+    // Always keep the latest payload available for the click handler
+    holidaysBtn._holidayEvents = events || {};
+
+    const holidaysList = document.getElementById('holidaysList');
+    const holidaysTitle = document.getElementById('holidaysTitle');
+    if (!holidaysList) return;
+
+    // Bind only once; syncUI calls this function repeatedly.
+    if (holidaysBtn._holidaysBound) return;
+    holidaysBtn._holidaysBound = true;
+
+    // Start hidden
+    holidaysCard.style.display = 'none';
+
+    holidaysBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const isVisible = window.getComputedStyle(holidaysCard).display !== 'none';
+        holidaysCard.style.display = isVisible ? 'none' : 'block';
+        if (isVisible) return;
+
+        holidaysList.innerHTML = '';
+
+        const todayBs = NepaliFunctions.BS.GetCurrentDate();
+        const currentEvents = holidaysBtn._holidayEvents || {};
+
+        const holidayItems = Object.keys(currentEvents)
+            .map((bsDate) => ({ bsDate, event: currentEvents[bsDate] }))
+            .filter(({ event }) => {
+                const isHoliday = event && (event.is_holiday === true || event.is_holiday === 1 || event.is_holiday === '1');
+                return isHoliday;
+            })
+            .filter(({ bsDate }) => {
+                const [year, month, day] = bsDate.split('-').map(Number);
+                const isPast = year < todayBs.year ||
+                    (year === todayBs.year && month < todayBs.month) ||
+                    (year === todayBs.year && month === todayBs.month && day < todayBs.day);
+                return !isPast;
+            })
+            .sort((a, b) => a.bsDate.localeCompare(b.bsDate));
+
+        if (holidayItems.length) {
+            const [y, m] = holidayItems[0].bsDate.split('-').map(Number);
+            if (holidaysTitle) {
+                holidaysTitle.textContent = `Holidays in ${NepaliFunctions.BS.GetMonthInUnicode(m - 1)} ${NepaliFunctions.ConvertToUnicode(y)}`;
+            }
+        } else if (holidaysTitle) {
+            holidaysTitle.textContent = 'Holidays';
+        }
+
+        holidayItems.forEach(({ bsDate, event }) => {
+            const [year, month, day] = bsDate.split('-').map(Number);
+
+            // Prefer DB ad_date if present; else convert from BS
+            const adDateRaw = event && event.ad_date ? event.ad_date : NepaliFunctions.BS2AD(bsDate);
+            const adDate = adDateRaw ? new Date(adDateRaw) : null;
+            const adText = adDate && !isNaN(adDate.getTime())
+                ? adDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                : '';
+
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span class="date">
+                    ${NepaliFunctions.ConvertToUnicode(day)}
+                    ${NepaliFunctions.BS.GetMonthInUnicode(month - 1)}
+                    ${NepaliFunctions.ConvertToUnicode(year)}
+                    ${adText ? ` | ${adText}` : ''}
+                </span>
+                <span class="holiday-name">${event && event.title ? event.title : ''}</span>
+            `;
+            holidaysList.appendChild(li);
+        });
+
+        if (!holidaysList.children.length) {
+            holidaysList.innerHTML = '<li><span class="date">No upcoming holidays.</span></li>';
+        }
+    });
 }
