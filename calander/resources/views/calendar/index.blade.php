@@ -4,129 +4,148 @@
 
     <div class='items'>
         <div class="module">
-            <h2><span><a href="#upcomingDays" class="headderNew">{{ __('site.Upcoming Days') }}</a></span></h2>
-            <ul class="upcomming-days scroll" tableindex="0" style="outline: none;">
-                <li class ="clearfix">
-                    <div class="date">
-                        <span>५</span>
-                        पुष
+            <div class="accordion" id="accordionPanelsStayOpenExample">
+                <div class="accordion-item">
+
+                    <h2 class="accordion-header" id="panelsStayOpen-headingOne"> <button class="accordion-button"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne"
+                            aria-expanded="true" aria-controls="panelsStayOpen-collapseOne"
+                            style="background-color: #00668f !important">
+
+                            <span><a href="#upcomingDays" class="headderNew"
+                                    style="color: #ffff !important">{{ __('site.Upcoming Days') }}</a></span>
+                    </h2>
+                    </button>
+                    <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
+                        aria-labelledby="panelsStayOpen-headingOne">
+                        <div class="accordion-body">
+                            <ul class="upcomming-days scroll" tableindex="0" style="outline: none;">
+                                <li class ="clearfix">
+                                    <div class="date">
+                                        <span>५</span>
+                                        पुष
+                                    </div>
+                                    <div class="info">
+                                        <span>
+                                            <a href="#date">तोल ल्होसार</a>
+                                        </span>
+                                        आज
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="info">
-                        <span>
-                            <a href="#date">तोल ल्होसार</a>
-                        </span>
-                        आज
-                    </div>
-                </li>
-                <li class ="clearfix">
-                    <div class="date">
-                        <span>५</span>
-                        पुष
-                    </div>
-                    <div class="info">
-                        <span>
-                            <a href="#date">तोल ल्होसार</a>
-                        </span>
-                        आज
-                    </div>
-                </li>
-                <li class ="clearfix">
-                    <div class="date">
-                        <span>५</span>
-                        "पुष"
-                    </div>
-                    <div class="info">
-                        <span>
-                            <a href="#date">तोल ल्होसार</a>
-                        </span>
-                        "आज "
-                    </div>
-                </li>
-                <li class ="clearfix">
-                    <div class="date">
-                        <span>५</span>
-                        "पुष"
-                    </div>
-                    <div class="info">
-                        <span>
-                            <a href="#date">तोल ल्होसार</a>
-                        </span>
-                        "आज "
-                    </div>
-                </li>
-                <li class ="clearfix">
-                    <div class="date">
-                        <span>५</span>
-                        "पुष"
-                    </div>
-                    <div class="info">
-                        <span>
-                            <a href="#date">तोल ल्होसार</a>
-                        </span>
-                        आज
-                    </div>
-                </li>
-                <li class ="clearfix">
-                    <div class="date">
-                        <span>५</span>
-                        पुष
-                    </div>
-                    <div class="info">
-                        <span>
-                            <a href="#date">तोल ल्होसार</a>
-                        </span>
-                        "आज "
-                    </div>
-                </li>
-                <li class ="clearfix">
-                    <div class="date">
-                        <span>५</span>
-                        "पुष"
-                    </div>
-                    <div class="info">
-                        <span>
-                            <a href="#date">तोल ल्होसार</a>
-                        </span>
-                        "आज "
-                    </div>
-                </li>
-                <li class ="clearfix">
-                    <div class="date">
-                        <span>५</span>
-                        "पुष"
-                    </div>
-                    <div class="info">
-                        <span>
-                            <a href="#date">तोल ल्होसार</a>
-                        </span>
-                        "आज "
-                    </div>
-                </li>
-                <li class ="clearfix">
-                    <div class="date">
-                        <span>५</span>
-                        "पुष"
-                    </div>
-                    <div class="info">
-                        <span>
-                            <a href="#date">तोल ल्होसार</a>
-                        </span>
-                        "आज "
-                    </div>
-                </li>
-                <li class ="clearfix">
-                    <div class="date">
-                        <span>५</span>
-                        "पुष"
-                    </div>
-                    <div class="info">
-                        <span>
-                            <a href="#date">तोल ल्होसार</a>
-                        </span>
-                        "आज "
-                    </div>
-                </li>
-            </ul>
+                </div>
+            </div>
+            {{-- <li class ="clearfix">
+                <div class="date">
+                    <span>५</span>
+                    पुष
+                </div>
+                <div class="info">
+                    <span>
+                        <a href="#date">तोल ल्होसार</a>
+                    </span>
+                    आज
+                </div>
+            </li>
+            <li class ="clearfix">
+                <div class="date">
+                    <span>५</span>
+                    "पुष"
+                </div>
+                <div class="info">
+                    <span>
+                        <a href="#date">तोल ल्होसार</a>
+                    </span>
+                    "आज "
+                </div>
+            </li>
+            <li class ="clearfix">
+                <div class="date">
+                    <span>५</span>
+                    "पुष"
+                </div>
+                <div class="info">
+                    <span>
+                        <a href="#date">तोल ल्होसार</a>
+                    </span>
+                    "आज "
+                </div>
+            </li>
+            <li class ="clearfix">
+                <div class="date">
+                    <span>५</span>
+                    "पुष"
+                </div>
+                <div class="info">
+                    <span>
+                        <a href="#date">तोल ल्होसार</a>
+                    </span>
+                    आज
+                </div>
+            </li>
+            <li class ="clearfix">
+                <div class="date">
+                    <span>५</span>
+                    पुष
+                </div>
+                <div class="info">
+                    <span>
+                        <a href="#date">तोल ल्होसार</a>
+                    </span>
+                    "आज "
+                </div>
+            </li>
+            <li class ="clearfix">
+                <div class="date">
+                    <span>५</span>
+                    "पुष"
+                </div>
+                <div class="info">
+                    <span>
+                        <a href="#date">तोल ल्होसार</a>
+                    </span>
+                    "आज "
+                </div>
+            </li>
+            <li class ="clearfix">
+                <div class="date">
+                    <span>५</span>
+                    "पुष"
+                </div>
+                <div class="info">
+                    <span>
+                        <a href="#date">तोल ल्होसार</a>
+                    </span>
+                    "आज "
+                </div>
+            </li>
+            <li class ="clearfix">
+                <div class="date">
+                    <span>५</span>
+                    "पुष"
+                </div>
+                <div class="info">
+                    <span>
+                        <a href="#date">तोल ल्होसार</a>
+                    </span>
+                    "आज "
+                </div>
+            </li>
+            <li class ="clearfix">
+                <div class="date">
+                    <span>५</span>
+                    "पुष"
+                </div>
+                <div class="info">
+                    <span>
+                        <a href="#date">तोल ल्होसार</a>
+                    </span>
+                    "आज "
+                </div>
+            </li>
+            </ul> --}}
         </div>
         <div class="dateConverter">
             <h3>{{ __('site.Date') }} {{ __('site.Converter') }}</h3>
@@ -139,17 +158,17 @@
 
             <div class="converter-inputs">
                 <div id="nepali-date-conversion" class="input-group nepali-date">
-                    <label for="nepaliDateInput">नेपाली मिति</label>
-                    <input type="text" id="nepali-datepicker" placeholder="Select Nepali Date"
+                    <label for="nepaliDateInput">{{ __('site.Nepali') }} {{ __('site.Date') }}</label>
+                    <input type="text" id="nepali-datepicker" placeholder="{{ __('site.select_nepali_date') }}"
                         style="padding:10px;font-size:16px;">
                 </div>
                 <div id="english-date-conversion" class="input-group english-date" style="display:none;">
-                    <label for="englishDateInput">अङ्ग्रेजी मिति</label>
+                    <label for="englishDateInput">{{ __('site.English') }} {{ __('site.Date') }}</label>
                     {{-- <input type="date" id="englishDateInput" placeholder="YYYY-MM-DD"> --}}
-                    <input type="date" id="english-datepicker" placeholder="Select English Date"
+                    <input type="date" id="english-datepicker" placeholder="{{ __('site.select_english_date') }}"
                         style="padding:10px;font-size:16px;">
                 </div>
-                <button id="convertBtn">Convert</button>
+                <button id="convertBtn">{{ __('site.convert') }}</button>
                 <div class="result" id='dateConversionResult'></div>
             </div>
         </div>

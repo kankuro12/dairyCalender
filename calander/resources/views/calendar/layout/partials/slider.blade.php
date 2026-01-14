@@ -2,12 +2,12 @@
     <h2 class="slider-header">{{ __('site.Nepali') }} {{ __('site.News') }}</h2>
 
     <div class="slider-wrapper">
-        <button class="nav-button nav-prev" id="prevBtn">
-            <i class="fas fa-chevron-left"></i>
+        <button type="button" class="nav-button nav-prev" id="prevBtn" aria-label="Previous">
+            <span aria-hidden="true"><i class="fa-solid fa-angle-left" style="margin-left:2px "></i></span>
         </button>
 
         <div class="slider-track" id="sliderTrack">
-            <!-- Slide 1 -->
+
             <div class="slide-item">
                 <img src="https://images.unsplash.com/photo-1464746133101-a2c3f88e0dd9?w=500&h=400&fit=crop"
                     alt="News">
@@ -23,7 +23,7 @@
                 </div>
             </div>
 
-            <!-- Slide 2 -->
+
             <div class="slide-item">
                 <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=500&h=400&fit=crop"
                     alt="News">
@@ -36,7 +36,7 @@
                 </div>
             </div>
 
-            <!-- Slide 3 -->
+
             <div class="slide-item">
                 <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&h=400&fit=crop"
                     alt="News">
@@ -138,8 +138,8 @@
             </div>
         </div>
 
-        <button class="nav-button nav-next" id="nextBtn">
-            <i class="fas fa-chevron-right"></i>
+        <button type="button" class="nav-button nav-next" id="nextBtn" aria-label="Next">
+            <span aria-hidden="true"><i class="fa-solid fa-angle-right" style="margin-right:2px "></i></span>
         </button>
     </div>
 </div>

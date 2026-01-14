@@ -17,4 +17,8 @@ return[
     'holidays'=>'बिदाहरू',
       'holidays_in' => ':month :year का बिदाहरू',
     'no_upcoming_holidays' => 'आउँदो कुनै बिदा छैन।',
+    'convert'=>'परिवर्तन गर्नुहोस्',
+    'select_nepali_date'=>'नेपाली मिति चयन गर्नुहोस्',
+    'select_english_date'=>'अंग्रेजी मिति चयन गर्नुहोस्',
+    'English'=>'अंग्रेजी',
     ];

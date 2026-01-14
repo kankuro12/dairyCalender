@@ -1,0 +1,83 @@
+@media (max-width: 768px) {
+    html,
+    body {
+        overflow-x: hidden;
+    }
+    .content,
+    .container-fluid {
+        overflow-x: clip;
+    }
+    /* Collapse the 3-column layout into single column on mobile */
+    .grid-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 0 12px;
+    }
+    /* Banner (blue circled area in reference) */
+    .date-banner.date-banner {
+        margin: 12px 12px 0;
+        padding: 16px 12px;
+        border-radius: 16px;
+    }
+    .date-banner .date-content {
+        width: 100%;
+        max-width: none;
+        flex: 0 0 auto;
+        min-width: 0;
+    }
+    .date-banner .ads-slider {
+        width: 100%;
+        max-width: none;
+        flex: 0 0 auto;
+        min-width: 0;
+    }
+    /* Slick slider negative margins can create horizontal scroll */
+    .date-banner .ads-slider .slick-list {
+        margin: 0;
+    }
+    .date-banner .ads-slider .slick-slide {
+        padding: 0;
+    }
+    .date-banner .ads-slider .ad-item img {
+        border-radius: 14px;
+        max-width: 100%;
+    }
+    /* Calendar: prevent 1px borders overflowing the viewport */
+    .calendar,
+    .calendar * {
+        box-sizing: border-box;
+    }
+    .calendar {
+        width: 100%;
+        overflow-x: clip;
+    }
+    .calendar .responsive,
+    .calendar ul.calendar-dates {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+    }
+    .calendar .responsive {
+        border-left: 0;
+        border-right: 0;
+    }
+    .calendar ul.calendar-dates {
+        border-left: 0;
+        border-right: 0;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+    .calendar ul.calendar-dates li {
+        height: 72px;
+        padding: 6px 4px 4px;
+    }
+    .calendar .calendar-dates .nep {
+        font-size: 18px;
+    }
+    .calendar .calendar-dates .event,
+    .calendar .calendar-dates .tithi {
+        font-size: 10px;
+    }
+    .calendar .calendar-dates .eng {
+        font-size: 10px;
+    }
+} /*# sourceMappingURL=mobile.css.map */

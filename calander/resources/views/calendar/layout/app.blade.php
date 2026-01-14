@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="{{ asset('css/app/index.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         * {
             margin: 0;
@@ -719,6 +722,16 @@
             'कार्तिक', 'मंसिर', 'पौष', 'माघ', 'फाल्गुन', 'चैत्र'
         ];
 
+        function getEnglishMonthName(monthIndex) {
+            if (!Number.isFinite(monthIndex)) return '';
+            return engMonths[monthIndex] || '';
+        }
+
+        function getNepaliMonthName(monthIndex) {
+            if (!Number.isFinite(monthIndex)) return '';
+            return nepMonths[monthIndex] || '';
+        }
+
         function getNepaliDayName(day) {
             const nepaliDays = [
                 'आइतबार', 'सोमबार', 'मङ्गलबार', 'बुधबार', 'बिहिबार', 'शुक्रबार', 'शनिबार'
@@ -787,10 +800,12 @@
             document.getElementById('dayTime').innerText = `${period} ${timeString}`;
             return {};
         }
-        console.log(updatedNepaliClock());
-        updatedNepaliClock();
-        setInterval(updatedNepaliClock, 1000);
-        console.log(updatedNepaliClock());
+        try {
+            updatedNepaliClock();
+            setInterval(updatedNepaliClock, 1000);
+        } catch (e) {
+            console.error('Failed to start Nepali clock', e);
+        }
 
 
 

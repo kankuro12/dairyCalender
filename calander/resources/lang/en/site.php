@@ -17,5 +17,9 @@ return[
 'holidays'=>'Holidays',
   'holidays_in' => 'Holidays in :month :year',
     'no_upcoming_holidays' => 'No upcoming holidays.',
+    'convert'=>'Convert',
+    'select_nepali_date'=>'Select Nepali Date',
+    'select_english_date'=>'Select English Date',
+    'English'=>'English',
 
 ];
