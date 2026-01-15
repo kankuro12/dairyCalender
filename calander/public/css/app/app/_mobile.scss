@@ -1,0 +1,320 @@
+ @media (max-width: 992px) {
+            .date-banner {
+                padding: 28px 16px;
+            }
+
+            .date-content {
+                flex: 0 0 35%;
+            }
+
+            .ads-slider {
+                flex: 0 0 65%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 16px;
+            }
+
+            .date-banner {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .date-content,
+            .ads-slider {
+                flex: 0 0 auto;
+                width: 100%;
+                max-width: none;
+            }
+
+            .ads-slider .ad-item img {
+                height: clamp(120px, 35vw, 180px);
+            }
+        }
+
+        .nepali-date {
+            font-size: 2.0em;
+
+
+            line-height: 1.2;
+        }
+
+        .english-day {
+            font-size: 2.0em;
+            margin-top: -10px;
+
+            /* margin-bottom: 12px; */
+            opacity: 0.95;
+        }
+
+        .nepali-tithi {
+            font-size: 1.3rem;
+            /* font-weight: 500; */
+            /* margin-bottom: 6px; */
+            opacity: 0.9;
+        }
+
+        .paksya-info {
+            font-size: 1.3rem;
+
+
+            opacity: 0.85;
+        }
+
+        .day-time {
+            font-size: 14px;
+
+
+            opacity: 0.8;
+        }
+
+        .english-date {
+            font-size: 14px;
+
+            opacity: 0.75;
+        }
+
+        .calendar-nav {
+            background-color: #f9fafb;
+            padding: 10px 30px;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 999999999999999;
+        }
+
+        .calendar-nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .calendar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #6b7280;
+            flex: 0 0 auto;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            fill: #6b7280;
+        }
+
+        .search-input {
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 14px;
+            outline: none;
+            width: 250px;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #dc2626;
+        }
+
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+
+        /* Tablet Styles (768px - 1199px) */
+        @media (max-width: 1199px) {
+            .nav {
+                padding: 0 30px;
+            }
+
+            .nav-links {
+                gap: 25px;
+            }
+
+            .nav-links li a {
+                font-size: 14px;
+            }
+
+            .logo-text {
+                font-size: 18px;
+            }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                gap: 20px;
+            }
+
+            .nav-links li a {
+                font-size: 13px;
+            }
+        }
+
+        /* Mobile and Small Tablet Styles (below 992px) */
+        @media (max-width: 991px) {
+            .nav {
+                padding: 16px 20px;
+            }
+
+            .hamburger {
+                display: flex;
+                order: 2;
+            }
+
+            .logo {
+                order: 1;
+            }
+
+            .nav-right {
+                order: 3;
+            }
+
+            .nav-center {
+                position: fixed;
+                top: 72px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 72px);
+                background-color: #ffffff;
+                flex-direction: column;
+                justify-content: flex-start;
+                padding: 30px 20px;
+                transition: left 0.3s ease;
+                overflow-y: auto;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-center.active {
+                left: 0;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+                align-items: flex-start;
+            }
+
+            .nav-links li {
+                width: 100%;
+                border-bottom: 1px solid #f3f4f6;
+            }
+
+            .nav-links li a {
+                display: block;
+                padding: 18px 16px;
+                font-size: 16px;
+                width: 100%;
+            }
+
+            .nav-links li a:hover {
+                background-color: #f9fafb;
+            }
+
+            .language-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+
+            .user-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .user-icon svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        /* Small Mobile Styles (below 576px) */
+        @media (max-width: 575px) {
+            .nav {
+                padding: 12px 16px;
+            }
+
+            .logo {
+                gap: 8px;
+            }
+
+            .logo-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 10px;
+            }
+
+            .logo-icon.logo-icon--image {
+                height: 34px;
+            }
+
+            .logo-icon .site-logo {
+                max-width: 140px;
+            }
+
+            .logo-text {
+                font-size: 16px;
+            }
+
+            .nav-right {
+                gap: 12px;
+            }
+
+            .language-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .user-icon {
+                width: 32px;
+                height: 32px;
+            }
+
+            .user-icon svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .hamburger span {
+                width: 24px;
+                height: 2.5px;
+            }
+
+            .nav-links li a {
+                font-size: 15px;
+                padding: 16px 12px;
+            }
+        }
+
+
+
+        /* Extra Small Mobile (below 375px) */
+        @media (max-width: 374px) {
+            .logo-text {
+                display: none;
+            }
+
+            .nav-right {
+                gap: 8px;
+            }
+
+            .language-btn {
+                padding: 5px 8px;
+                font-size: 11px;
+            }
+        }

@@ -106,7 +106,7 @@ function renderCalendar(bsYear, bsMonth) {
     const firstJsDate = new Date(firstAdDate);
     const startDay = firstJsDate.getDay();
 
-    //map garna lai sub gareko 
+    //map garna lai sub gareko
     const gridStartAdDate = new Date(firstJsDate);
     gridStartAdDate.setDate(firstJsDate.getDate() - startDay);
 
@@ -242,7 +242,7 @@ function renderCalendar(bsYear, bsMonth) {
         <span class="nep">${NepaliFunctions.ConvertToUnicode(bs.day)}</span>
             <span class="eng">${adDate.getDate()}</span>
             <span class='tithi'></span>
-           
+
             `;
     }
 }
@@ -424,7 +424,7 @@ function dropdownsCalendar(currentYear, currentMonth) {
         }
         monthSelect.appendChild(option);
     });
-    for (let year = 2000; year <= 2090; year++) {
+    for (let year = 2001; year <= 2090; year++) {
         const option = document.createElement('option');
         option.value = year;
         option.textContent = NepaliFunctions.ConvertToUnicode(year);

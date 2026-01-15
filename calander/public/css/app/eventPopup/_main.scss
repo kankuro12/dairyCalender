@@ -1,0 +1,20 @@
+   .popup-box {
+        position: absolute;
+        display: none;
+        width: 300px;
+        background: #fff;
+        border-radius: 6px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        z-index: 1000;
+    }
+
+    .popup-header {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .popup-body {
+        padding: 12px;
+    }

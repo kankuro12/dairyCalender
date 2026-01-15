@@ -20,69 +20,9 @@
         </div>
     </div>
 </div>
-<style>
-    .teleprompter-wrapper {
-        position: relative;
-        overflow: hidden;
-        flex: 1;
-        height: 30px;
-        min-width: 0;
-    }
 
-    .teleprompter-track {
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translate3d(0, -50%, 0%);
-        display: inline-flex;
-        white-space: nowrap;
-        will-change: transform;
-    }
 
-    .teleprompter-content {
-        display: inline-flex;
-        align-items: baseline;
-    }
 
-    /* Announcement styles */
-    .announcement-item {
-        display: inline-flex;
-        align-items: baseline;
-        gap: 6px;
-        font-size: 14px;
-        color: #111827;
-    }
-
-    .announcement-title {
-        color: #374151;
-    }
-
-    .announcement-sep {
-        color: #9ca3af;
-        font-size: 14px;
-    }
-
-    .type {
-        font-weight: 700;
-        margin-right: 4px;
-    }
-
-    .type.news {
-        color: #1d4ed8;
-    }
-
-    .type.announcement {
-        color: #dc2626;
-    }
-
-    .type.alert {
-        color: #f59e0b;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        /* Keep readable (user can still see it). We don't force-stop JS here. */
-    }
-</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -105,9 +45,11 @@
             const speed = Math.max(10, Number(wrapper.dataset.speed || 90));
 
             function measure() {
-                contentWidth = content.scrollWidth || 0;
+                // Prefer precise layout width; fall back to scrollWidth.
+                contentWidth = (content.getBoundingClientRect && content.getBoundingClientRect()
+                    .width) || content.scrollWidth || 0;
                 // Start from the right edge (first character enters immediately from right boundary)
-                x = wrapper.clientWidth || 0;
+                x = Math.round(wrapper.clientWidth || 0);
             }
 
             function ensureMeasured(triesLeft) {
@@ -135,12 +77,14 @@
 
                 x -= speed * dt;
 
-                // Seamless wrap: shift by exactly one content width (no reset jump).
-                if (contentWidth > 0 && x <= -contentWidth) {
+                // Seamless wrap: ensure we wrap by exact content widths (handle large dt and floating-point drift).
+                while (contentWidth > 0 && x <= -contentWidth) {
                     x += contentWidth;
                 }
 
-                track.style.transform = `translate3d(${x}px, -50%, 0)`;
+                // Round the transform to avoid sub-pixel rendering gaps/jitter.
+                const tx = Math.round(x);
+                track.style.transform = `translate3d(${tx}px, -50%, 0)`;
                 requestAnimationFrame(frame);
             }
 

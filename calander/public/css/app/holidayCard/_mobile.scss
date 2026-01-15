@@ -1,0 +1,46 @@
+  @media (max-width: 720px) {
+         .cta-button a {
+            padding: 6px 8px;
+            font-size: 11px;
+        }
+     .holidayscard {
+            left: 8px;
+            right: 8px;
+            width: auto;
+            max-width: calc(100vw - 32px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            position: fixed;
+            top: auto;
+            bottom: 12px;
+            transform: none;
+            padding: 10px;
+            max-height: 55vh;
+        }
+
+        .holidayscard h3 {
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .holidayscard li {
+            flex-direction: column;
+            gap: 6px;
+            padding: 8px 6px;
+        }
+
+        .holidayscard .date {
+            flex: none;
+            font-size: 12px;
+        }
+
+        .holidayscard .holiday-name {
+            text-align: left;
+            font-size: 13px;
+        }
+    }
+
+.holidayscard .empty {
+    text-align: center;
+    color: #777;
+    padding: 12px 0;
+}

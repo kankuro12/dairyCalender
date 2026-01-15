@@ -1,10 +1,26 @@
+@forward './app/main';
 @forward './slider/main';
 @forward './grid/main';
+@forward './calendarNav/main';
 @forward './upcomingdays/main';
 @forward './calanderHeader/main';
 @forward './calanderDays/main';
 @forward './calender/main';
 @forward './dateConverter/main';
+@forward'./holidayCard/main';
+@forward'./eventPopup/main';
+
+
+
+       * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Mukta', sans-serif;
+        }
 
    a {
         text-decoration: none;
@@ -12,6 +28,11 @@
     }
       ul {
         list-style: none;
+    }
+
+    button{
+        border: none;
+
     }
 
 

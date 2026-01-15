@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Setting;
-use Intervention\Image\ImageManager;
+
 
 class SettingController extends Controller
 {
-    protected ImageManager $image;
+    protected $image;
 
     public function __construct()
     {
@@ -23,12 +23,12 @@ class SettingController extends Controller
             // Check GD JPEG support before using GD driver
             $gdInfo = gd_info();
             $hasJpegSupport = isset($gdInfo['JPEG Support']) && $gdInfo['JPEG Support'];
-            
+
             if (!$hasJpegSupport) {
                 // If GD doesn't have JPEG support, we'll need to handle this in processImage
                 \Log::warning('GD library does not have JPEG support. Some image formats may not work correctly.');
             }
-            
+
             $this->image = new ImageManager(\Intervention\Image\Drivers\Gd\Driver::class);
         }
     }
@@ -188,7 +188,7 @@ class SettingController extends Controller
         $gdInfo = gd_info();
         $hasJpegSupport = isset($gdInfo['JPEG Support']) && $gdInfo['JPEG Support'];
         $hasPngSupport = isset($gdInfo['PNG Support']) && $gdInfo['PNG Support'];
-        
+
         if (!$hasPngSupport) {
             throw new \RuntimeException('GD library does not support PNG format. Please install PNG support for GD.');
         }
@@ -196,7 +196,7 @@ class SettingController extends Controller
         // Detect the input file type
         $mimeType = $file->getMimeType();
         $isJpeg = in_array($mimeType, ['image/jpeg', 'image/jpg']);
-        
+
         // If input is JPEG but JPEG support is not available, we cannot process it
         if ($isJpeg && !$hasJpegSupport) {
             throw new \RuntimeException(
@@ -231,7 +231,7 @@ class SettingController extends Controller
                     'Original error: ' . $e->getMessage()
                 );
             }
-            
+
             // For other errors, rethrow as-is
             throw $e;
         }

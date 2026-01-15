@@ -1,0 +1,64 @@
+
+
+
+ .teleprompter-wrapper {
+        position: relative;
+        overflow: hidden;
+        flex: 1;
+        height: 30px;
+        min-width: 0;
+    }
+
+    .teleprompter-track {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translate3d(0, -50%, 0%);
+        display: inline-flex;
+        white-space: nowrap;
+        will-change: transform;
+    }
+
+    .teleprompter-content {
+        display: inline-flex;
+        align-items: baseline;
+    }
+
+    /* Announcement styles */
+    .announcement-item {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 6px;
+        font-size: 14px;
+        color: #111827;
+    }
+
+    .announcement-title {
+        color: #374151;
+    }
+
+    .announcement-sep {
+        color: #9ca3af;
+        font-size: 14px;
+    }
+
+    .type {
+        font-weight: 700;
+        margin-right: 4px;
+    }
+
+    .type.news {
+        color: #1d4ed8;
+    }
+
+    .type.announcement {
+        color: #dc2626;
+    }
+
+    .type.alert {
+        color: #f59e0b;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        /* Keep readable (user can still see it). We don't force-stop JS here. */
+    }

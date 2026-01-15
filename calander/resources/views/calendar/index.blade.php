@@ -2,7 +2,7 @@
 
 <div class="grid-container">
 
-    <div class='items'>
+    <div class='items '>
         <div class="module">
             <div class="accordion" id="accordionPanelsStayOpenExample">
                 <div class="accordion-item">
@@ -234,7 +234,7 @@
 
                         <span class="eng">16</span>
                         {{-- <span class="eng">
-                       
+
                     </span> --}}
                         {{-- <div class="popup-box daydetailsPopOverWrapper" id="daypop"
                             style="opacity:1;overflow:hidden;display:hidden;">
@@ -323,19 +323,19 @@
 
     </div>
 </div>
-<style>
+{{-- <style>
     button {
         border: none;
     }
 
 
 
-    .calendar-dates li.disabled {
+    /* .calendar-dates li.disabled {
         opacity: 0.4;
         pointer-events: none;
-    }
+    } */
 
-    .calendar-dates li.today {
+    /* .calendar-dates li.today {
         background: #b71c1c;
         color: #fff;
     }
@@ -368,7 +368,7 @@
 
         background: #8e0000;
         color: #fff;
-    }
+    } */
 
     .daydetailsPopOverWrapper {
         position: absolute;
@@ -410,7 +410,7 @@
 
     /* .calendar-dates li:hover .daydetailsPopOverWrapper {
         display: block;
-  
+
 
         .daydetailsPopOverWrapper .arrow {
             position: absolute;
@@ -590,7 +590,7 @@
         height: 70vh;
         border-radius: 16px 16px 0 0;
     } */
-</style>
+</style> --}}
 <script>
     //language ko lagi
     window.i18n = {
