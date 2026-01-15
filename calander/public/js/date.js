@@ -350,17 +350,22 @@ function renderUpcomingDays(events) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const today = NepaliFunctions.BS.GetCurrentDate();
+    let currentYear, currentMonth;
     const pathparts = window.location.pathname.split('/').filter(Boolean);
-    let currentYear = today.year;
-    let currentMonth = today.month;
+    // let currentYear = today.year;
+    // let currentMonth = today.month;
     // dropdownsCalendar(currentYear, currentMonth);
     // renderCalendar(currentYear, currentMonth);
     if (pathparts.length === 3 && pathparts[0] === 'calendar') {
         const year = parseInt(pathparts[1], 10);
         const month = parseInt(pathparts[2], 10);
-        if (!isNaN(year)) currentYear = year;
-        if (!isNaN(month)) currentMonth = month;
+        currentYear = !isNaN(year) ? year : null;
+        currentMonth = !isNaN(month) ? month : null;
+    }
+    if (!currentYear || !currentMonth) {
+        const today = NepaliFunctions.BS.GetCurrentDate();
+        currentYear = today.year;
+        currentMonth = today.month;
     }
     syncUI();
 
@@ -493,7 +498,7 @@ function updatePageTitle(bsYear, bsMonth) {
 //url
 function updateURL(bsYear, bsMonth) {
     const newUrl = `/calendar/${bsYear}/${String(bsMonth).padStart(2, '0')}`;
-    window.history.pushState({}, '', newUrl);
+    window.history.replaceState({}, '', newUrl);
 }
 
 function todayCard() {
