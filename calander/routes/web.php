@@ -25,6 +25,8 @@ Route::middleware(['admin'])->name('admin.')->group(function () {
     Route::get('/admin/load-event', [CalendarController::class, 'loadEvents'])->name('loadEvents');
     Route::match(['get','post'], '/admin/add-month-data/{month}', [CalendarController::class, 'addMonthData'])->name('add.month.data');
     Route::get('/admin/api/show-month-data/{month}', [CalendarController::class, 'showMonthData'])->name('show.month.data.api');
+    Route::get('/admin/months-data/{year}', [CalendarController::class, 'getMonthsDataByYear'])->name('months.data.by.year');
+    Route::get('/admin/stats/{year}', [CalendarController::class, 'getStatsByYear'])->name('stats.by.year');
     Route::get('/events/logo', [SettingController::class, 'index'])->name('events.logo');
     Route::post('/events/logo', [SettingController::class, 'store'])->name('events.logo.store');
     Route::get('/admin/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');

@@ -39,11 +39,51 @@ class CalendarController extends Controller
     }
     public function adminIndex(Request $request){
         if($request->isMethod('post')){
-            // Handle POST request logic here
             return response()->json(['message' => 'POST request received']);
         }
-        // Handle GET request logic here
-        return view('backend.app');
+
+        // Get current Nepali year from JavaScript NepaliFunction (we'll pass it from frontend)
+        // For now, get it from the first available event or use a default
+        $currentBsYear = CalendarEvent::orderBy('bs_year', 'desc')->value('bs_year') ?? 2082;
+
+        // Get statistics for dashboard - filtered by current BS year
+        $totalEvents = CalendarEvent::where('bs_year', $currentBsYear)->count();
+        $totalHolidays = CalendarEvent::where('bs_year', $currentBsYear)
+            ->where('is_holiday', true)
+            ->count();
+        $activeAnnouncements = DB::table('announcements')->where('status', true)->count();
+
+        // Get month names in Nepali
+        $nepaliMonths = [
+            1 => 'बैशाख',
+            2 => 'जेष्ठ',
+            3 => 'आषाढ',
+            4 => 'श्रावण',
+            5 => 'भाद्र',
+            6 => 'आश्विन',
+            7 => 'कार्तिक',
+            8 => 'मंसिर',
+            9 => 'पौष',
+            10 => 'माघ',
+            11 => 'फाल्गुन',
+            12 => 'चैत्र',
+        ];
+
+        // Get event counts per month for current year only
+        $eventCounts = CalendarEvent::selectRaw('bs_month, COUNT(*) as count')
+            ->where('bs_year', $currentBsYear)
+            ->groupBy('bs_month')
+            ->pluck('count', 'bs_month')
+            ->toArray();
+
+        return view('backend.app', compact(
+            'totalEvents',
+            'totalHolidays',
+            'activeAnnouncements',
+            'nepaliMonths',
+            'eventCounts',
+            'currentBsYear'
+        ));
     }
     public function loadEvents(){
 
@@ -132,5 +172,33 @@ class CalendarController extends Controller
             return sprintf('%04d-%02d-%02d', $item->bs_year, $item->bs_month, $item->bs_day);
         });
         return response()->json($events);
+    }
+
+    public function getMonthsDataByYear($year){
+        // Get event counts per month for the selected year
+        $eventCounts = CalendarEvent::selectRaw('bs_month, COUNT(*) as count')
+            ->where('bs_year', $year)
+            ->groupBy('bs_month')
+            ->pluck('count', 'bs_month')
+            ->toArray();
+
+        return response()->json([
+            'year' => $year,
+            'eventCounts' => $eventCounts
+        ]);
+    }
+
+    public function getStatsByYear($year){
+        // Get statistics for the specified year
+        $totalEvents = CalendarEvent::where('bs_year', $year)->count();
+        $totalHolidays = CalendarEvent::where('bs_year', $year)
+            ->where('is_holiday', true)
+            ->count();
+
+        return response()->json([
+            'year' => $year,
+            'totalEvents' => $totalEvents,
+            'totalHolidays' => $totalHolidays
+        ]);
     }
 }

@@ -1,197 +1,132 @@
-.container {
-            max-width: 980px;
-            margin: 0 auto;
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 20px;
-        
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
 
-        h1 {
-            margin: 0 0 16px;
-            font-size: 22px;
-        }
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+}
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
+.sliders-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 
-        .grid > * { min-width: 0; }
+.slider-item {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s ease;
 
-        .section {
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 16px;
-            background: #ffffff;
-        }
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary-purple);
+  }
 
-        .section-title {
-            font-weight: 700;
-            margin: 0 0 12px;
-            font-size: 14px;
-            color: #374151;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
 
-        .field { margin-bottom: 12px; }
-        label {
-            display: block;
-            font-size: 13px;
-            color: #374151;
-            margin-bottom: 6px;
-        }
+    .slider-label {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
 
-        input[type="text"],
-        input[type="email"] {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            max-width: 100%;
-        }
-
-        input[type="color"] {
-            width: 100%;
-            height: 42px;
-            padding: 6px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            background: #fff;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus {
-            border-color: #9ca3af;
-        }
-
-        .actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-        }
-
-        button {
-            padding: 10px 14px;
-            border: none;
-            border-radius: 8px;
-            background: #111827;
-            color: #fff;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .msg {
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin: 0 0 16px;
-            font-size: 14px;
-        }
-
-        .msg-success { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
-        .msg-error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
-
-        /* Custom Dropify */
-        .dropify {
-            border: 2px dashed #d1d5db;
-            border-radius: 10px;
-            padding: 12px;
-            background: #fafafa;
-            transition: border-color 0.15s ease, background 0.15s ease;
-            position: relative;
-        }
-        .dropify.is-dragover {
-            border-color: #6b7280;
-            background: #f3f4f6;
-        }
-
-        .dropify .dropify-input {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .dropify-inner {
-            display: grid;
-            grid-template-columns: minmax(0, 120px) minmax(0, 1fr);
-            gap: 12px;
-            align-items: center;
-        }
-
-        .dropify-preview {
-            width: 120px;
-            height: 80px;
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .dropify-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        .dropify-meta {
-            min-height: 80px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 6px;
-            min-width: 0;
-        }
-
-        .dropify-title {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .dropify-hint {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .dropify-controls {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .btn-lite {
-            background: #fff;
-            color: #111827;
-            border: 1px solid #d1d5db;
-            padding: 7px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .btn-danger {
-            background: #fff;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
-        .error-text { font-size: 12px; color: #991b1b; margin-top: 6px; }
-
-        @media (max-width: 820px) {
-            .grid { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 520px) {
-            .dropify-inner { grid-template-columns: 1fr; }
-            .dropify-preview { width: 100%; height: 140px; }
-        }
+      i {
+        color: var(--primary-purple);
+      }
     }
+  }
+}
+
+.empty-state-slider {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+
+  i {
+    font-size: 64px;
+    color: var(--border-light);
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: 14px;
+    margin: 0;
+    color: var(--text-primary);
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-light);
+}
+
+.form-control-color {
+  width: 100%;
+  height: 50px;
+  padding: 8px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--bg-white);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--primary-purple);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+  }
+}
+
+.dropify-error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: #fee;
+  border-radius: 6px;
+  border-left: 3px solid #dc3545;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+
+  i {
+    margin-top: 2px;
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-grid {
+    gap: 16px;
+  }
+
+  .sliders-grid {
+    gap: 16px;
+  }
+
+  .empty-state-slider {
+    padding: 40px 20px;
+
+    i {
+      font-size: 48px;
+    }
+  }
+}

@@ -1,70 +1,100 @@
 @extends('backend.layout.app')
 @section('content')
-    <div class="container event-details">
-        <button id="fetchapi">Fetch API Data</button>
+    <div class="dashboard-container">
+        <!-- Page Header -->
+        <div class="dashboard-header">
+            <div>
+                <h1 class="page-title">Edit Month Events: {{ $month }}</h1>
+                <p class="page-subtitle">Add and manage events for all days in this month</p>
+            </div>
+            <div>
+                <button id="fetchapi" class="btn btn-secondary">
+                    <i class="fas fa-sync-alt"></i>
+                    Fetch API Data
+                </button>
+            </div>
+        </div>
 
         <div id="loadingOverlay" class="loading-overlay" style="display:none;">
             <div class="spinner"></div>
             <div class="loading-text">Fetching data…</div>
         </div>
 
-        <h1>Add Events for Month: {{ $month }}</h1>
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Calendar Events for Month {{ $month }}
+                </h2>
+                <div class="card-subtitle">
+                    Click on any cell to edit. Changes will be saved when you submit the form.
+                </div>
+            </div>
 
-        <form method="POST" action="{{ route('admin.add.month.data', ['month' => $month]) }}" id="monthForm">
-            @csrf
-            <input type="hidden" name="month" value="{{ $month }}">
-            <table border="1" cellpadding="10" id="calendarTable">
-                <tr>
-                    <th>Sn</th>
-                    <th>Bs Date</th>
-                    <th>AD Date</th>
-                    <th>Event</th>
-                    <th>Holiday</th>
-                    <th>Extra Event</th>
-                    <th>Date Text</th>
-                    <th>Notes</th>
-                </tr>
-                @for ($i = 1; $i <= $daysInMonth; $i++)
-                    @php
-                        $datekey = "{$year}-{$month}-$i";
-                        $day = $events[$datekey] ?? null;
+            <div class="card-body">
+                <form method="POST" action="{{ route('admin.add.month.data', ['month' => $month]) }}" id="monthForm">
+                    @csrf
+                    <input type="hidden" name="month" value="{{ $month }}">
 
-                    @endphp
-                    <tr data-date="{{ $datekey }}">
-                        <td>{{ $i }}</td>
-                        <td>{{ $datekey }}</td>
-                        <td class="addate" data-field="ad-date" id='ad-date'>
-                        </td>
-                        {{-- @if ($day)
-                        <td class="editable" data-field="event">{{ ($day['date'] ?? '') !== '--' ? $day['date'] : '' }}
-                        </td>
-                        <td class="editable" data-field="holiday">{{ $day['holiday'] ? 'Yes' : '' }}</td>
-                        <td class="editable" data-field="extra_event">{{ $day['event'] ?? '' }}</td>
-                        <td class="editable" data-field="date_text">{{ $day['text'] ?? '' }}</td>
-                        <td class="editable" data-field="notes"></td>
-                    {{-- @else --}}
-                        <td class="editable" data-field="event">{{ $day && $day->title !== '--' ? $day->title : '' }}
-                        </td>
-                        <td class="editable" data-field="holiday">
-                            {{ $day && $day->is_holiday ? 'Yes' : '' }}
-                        </td>
-                        <td class="editable" data-field="extra_event">
-                            {{ $day ? $day->extra_events : '' }}
-                        </td>
-                        <td class="editable" data-field="date_text">
-                            {{ $day ? $day->tithi : '' }}
-                        </td>
-                        <td class="editable" data-field="notes">
-                            {{ $day ? $day->notes : '' }}
-                        </td>
-                        <input type ="hidden" class="ad-date-input">
-                        {{-- @endif --}}
-                    </tr>
-                @endfor
-            </table>
-            <br>
-            <button type="submit" class="btn btn-success">Save Month Data</button>
-        </form>
+                    <div class="table-responsive">
+                        <table class="month-data-table" id="calendarTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">S.N.</th>
+                                    <th style="width: 120px;">BS Date</th>
+                                    <th style="width: 120px;">AD Date</th>
+                                    <th style="width: 200px;">Event</th>
+                                    <th style="width: 100px;">Holiday</th>
+                                    <th style="width: 180px;">Extra Event</th>
+                                    <th style="width: 150px;">Tithi/Date Text</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for ($i = 1; $i <= $daysInMonth; $i++)
+                                    @php
+                                        $datekey = "{$year}-{$month}-$i";
+                                        $day = $events[$datekey] ?? null;
+                                    @endphp
+                                    <tr data-date="{{ $datekey }}">
+                                        <td class="text-center">{{ $i }}</td>
+                                        <td class="bs-date">{{ $datekey }}</td>
+                                        <td class="addate" data-field="ad-date" id='ad-date'></td>
+                                        <td class="editable" data-field="event">
+                                            {{ $day && $day->title !== '--' ? $day->title : '' }}
+                                        </td>
+                                        <td class="editable text-center" data-field="holiday">
+                                            {{ $day && $day->is_holiday ? 'Yes' : '' }}
+                                        </td>
+                                        <td class="editable" data-field="extra_event">
+                                            {{ $day ? $day->extra_events : '' }}
+                                        </td>
+                                        <td class="editable" data-field="date_text">
+                                            {{ $day ? $day->tithi : '' }}
+                                        </td>
+                                        <td class="editable" data-field="notes">
+                                            {{ $day ? $day->notes : '' }}
+                                        </td>
+                                        <input type="hidden" class="ad-date-input">
+                                    </tr>
+                                @endfor
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 24px;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Month Data
+                        </button>
+                        <a href="{{ route('admin.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
     @push('scripts')
         <script src={{ asset('js/nepali.datepicker.min.js') }}></script>

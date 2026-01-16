@@ -1,0 +1,317 @@
+.dropify-wrapper {
+  border: 2px dashed var(--border-light);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: var(--bg-white);
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    border-color: var(--primary-purple);
+    background: var(--bg-lavender);
+  }
+
+  .dropify-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+
+    span.file-icon {
+      font-size: 48px;
+      color: var(--primary-purple);
+      opacity: 0.5;
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 14px;
+
+      &.dropify-help {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+    }
+  }
+
+  .dropify-preview {
+    padding: 10px;
+
+    .dropify-render {
+      img {
+        max-width: 100%;
+        max-height: 300px;
+        border-radius: 8px;
+        object-fit: contain;
+      }
+    }
+
+    .dropify-infos {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: var(--bg-lavender);
+      border-radius: 6px;
+
+      .dropify-infos-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        p {
+          margin: 0;
+          font-size: 13px;
+          color: var(--text-primary);
+
+          &.dropify-filename {
+            font-weight: 500;
+          }
+
+          &.dropify-infos-message {
+            font-size: 12px;
+            color: var(--text-muted);
+          }
+        }
+      }
+    }
+  }
+
+  .dropify-clear {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(239, 68, 68, 0.9);
+    color: var(--bg-white);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+
+    &:hover {
+      background: #dc2626;
+      transform: scale(1.1);
+    }
+  }
+
+  &.has-preview {
+    border-style: solid;
+    border-color: var(--primary-purple);
+    background: var(--bg-lavender);
+
+    .dropify-message {
+      display: none;
+    }
+  }
+
+  input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+}
+
+.dropify-logo {
+  .dropify-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .dropify-preview {
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-white);
+    border: 2px solid var(--border-light);
+    border-radius: 12px;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+  }
+
+  .dropify-meta {
+    width: 100%;
+    text-align: center;
+  }
+
+  .dropify-controls {
+    justify-content: center;
+  }
+}
+
+.dropify-slider {
+  .dropify-inner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+  .dropify-preview {
+    flex-shrink: 0;
+    width: 400px;
+    height: 150px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-white);
+    border: 2px solid var(--border-light);
+    border-radius: 12px;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      height: 200px;
+    }
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  }
+
+  .dropify-meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .dropify-title {
+    text-align: left;
+  }
+
+  .dropify-hint {
+    text-align: left;
+  }
+
+  .dropify-controls {
+    justify-content: flex-start;
+  }
+}
+
+.slider-upload-wrapper {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h5 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      i {
+        color: var(--primary-purple);
+      }
+    }
+
+    .btn-remove-slider {
+      padding: 6px 12px;
+      font-size: 13px;
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fee2e2;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #dc2626;
+        color: var(--bg-white);
+      }
+
+      i {
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+.file-validation-error {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: #fef2f2;
+  border-left: 4px solid #dc2626;
+  border-radius: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  i {
+    color: #dc2626;
+    font-size: 16px;
+    margin-top: 2px;
+  }
+
+  p {
+    margin: 0;
+    color: #7f1d1d;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 768px) {
+  .dropify-wrapper {
+    padding: 16px;
+
+    .dropify-message span.file-icon {
+      font-size: 36px;
+    }
+
+    .dropify-preview .dropify-render img {
+      max-height: 200px;
+    }
+  }
+
+  .slider-upload-wrapper .slider-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

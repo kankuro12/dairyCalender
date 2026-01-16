@@ -27,7 +27,7 @@
     <div class="main-content" id="mainContent">
         <!-- Top Header -->
         <div class="top-header">
-            <button class="btn-back">
+            {{-- <button class="btn-back">
                 <i class="fas fa-arrow-left"></i>
             </button>
 
@@ -36,7 +36,7 @@
                     <i class="fas fa-redo"></i>
                 </button>
 
-            </div>
+            </div> --}}
         </div>
 
         @yield('content')

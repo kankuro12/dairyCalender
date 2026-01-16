@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use App\Models\Setting;
 class SettingController extends Controller
 {
@@ -65,6 +66,12 @@ class SettingController extends Controller
      * =============================== */
     public function store(Request $request)
     {
+        Log::info('Settings form submitted', [
+            'fields' => array_keys($request->all()),
+            'files' => array_keys($request->allFiles()),
+            'ip' => $request->ip()
+        ]);
+
         $validated = $request->validate([
             'site_name' => 'nullable|string|max:255',
             'contact_phone' => 'nullable|string|max:50',
@@ -74,7 +81,7 @@ class SettingController extends Controller
             'logo_color' => 'nullable|regex:/^#([0-9a-fA-F]{6})$/',
             'logo_color_hex' => 'nullable|regex:/^#([0-9a-fA-F]{6})$/',
 
-            'logo_image' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
+            'logo_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'remove_logo_image' => 'nullable|boolean',
         ]);
 
@@ -109,13 +116,35 @@ class SettingController extends Controller
                 (int) filter_var($b, FILTER_SANITIZE_NUMBER_INT)
             );
             Cache::put('sliders', $sliders);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Re-throw validation errors so they display properly
+            Log::warning('Validation failed', [
+                'errors' => $e->errors()
+            ]);
+            throw $e;
         } catch (\RuntimeException $e) {
+            Log::error('Runtime error during settings save', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return redirect()
                 ->route('admin.events.logo')
-                ->withErrors(['image' => $e->getMessage()])
+                ->withErrors(['error' => $e->getMessage()])
+                ->withInput();
+        } catch (\Exception $e) {
+            Log::error('Unexpected error during settings save', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return redirect()
+                ->route('admin.events.logo')
+                ->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()])
                 ->withInput();
         }
 
+        Log::info('Settings saved successfully');
         return redirect()
             ->route('admin.events.logo')
             ->with('success', 'Settings saved successfully');
@@ -164,16 +193,26 @@ class SettingController extends Controller
 
         $rules = [];
         foreach ($keys as $key) {
-            $rules[$key] = 'nullable|image|mimes:jpg,jpeg,png|max:4096';
+            $rules[$key] = 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048';
             $rules['remove_' . $key] = 'nullable|boolean';
         }
 
-        Validator::make($request->all(), $rules)->validate();
+        try {
+            Validator::make($request->all(), $rules)->validate();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Log validation errors for debugging
+            Log::warning('Slider validation failed', [
+                'errors' => $e->errors(),
+                'sliders' => $keys
+            ]);
+            throw $e;
+        }
 
         foreach ($keys as $key) {
             $existing = $allSettings[$key] ?? null;
 
             if ($request->boolean('remove_' . $key)) {
+                Log::info("Removing slider: {$key}");
                 if ($existing) Storage::disk('public')->delete($existing);
                 Setting::deleteKey($key);
                 continue;
@@ -181,11 +220,27 @@ class SettingController extends Controller
 
             if (!$request->hasFile($key)) continue;
 
-            if ($existing) Storage::disk('public')->delete($existing);
+            try {
+                Log::info("Processing slider: {$key}", [
+                    'original_name' => $request->file($key)->getClientOriginalName(),
+                    'size' => $request->file($key)->getSize(),
+                    'mime' => $request->file($key)->getMimeType()
+                ]);
 
-            $path = $this->processImage($request->file($key));
+                if ($existing) Storage::disk('public')->delete($existing);
 
-            Setting::setValue($key, $path);
+                $path = $this->processImage($request->file($key));
+
+                Setting::setValue($key, $path);
+
+                Log::info("Slider saved successfully: {$key}", ['path' => $path]);
+            } catch (\Exception $e) {
+                Log::error("Failed to process slider: {$key}", [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                throw new \RuntimeException("The {$key} failed to upload: " . $e->getMessage());
+            }
         }
 
         $this->compactSliders();
@@ -200,8 +255,36 @@ class SettingController extends Controller
     {
         // Simplified: store uploaded file as-is under `settings/` on the public disk.
         // This removes the need for Intervention/Image and GD extensions.
-        if (!$file || !$file->isValid()) {
-            throw new \RuntimeException('Uploaded file is invalid');
+        Log::info('Processing image upload', [
+            'original_name' => $file->getClientOriginalName(),
+            'size' => $file->getSize(),
+            'mime' => $file->getMimeType()
+        ]);
+
+        if (!$file) {
+            throw new \RuntimeException('No file provided');
+        }
+
+        if (!$file->isValid()) {
+            $error = $file->getError();
+            $errorMessages = [
+                UPLOAD_ERR_INI_SIZE => 'File exceeds upload_max_filesize directive in php.ini (currently 2MB)',
+                UPLOAD_ERR_FORM_SIZE => 'File exceeds MAX_FILE_SIZE directive in HTML form',
+                UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
+                UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+                UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder',
+                UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+                UPLOAD_ERR_EXTENSION => 'File upload stopped by PHP extension',
+            ];
+            $errorMsg = $errorMessages[$error] ?? 'Unknown upload error (code: ' . $error . ')';
+
+            Log::error('File upload invalid', [
+                'error_code' => $error,
+                'error_message' => $errorMsg,
+                'file' => $file->getClientOriginalName()
+            ]);
+
+            throw new \RuntimeException('Upload failed: ' . $errorMsg);
         }
 
         $ext = $file->getClientOriginalExtension() ?: $file->extension() ?: 'jpg';
@@ -209,7 +292,20 @@ class SettingController extends Controller
         $path = 'settings/' . $filename;
 
         // Store file in public disk
-        Storage::disk('public')->putFileAs('settings', $file, $filename);
+        try {
+            Storage::disk('public')->putFileAs('settings', $file, $filename);
+
+            Log::info('Image saved successfully', [
+                'path' => $path,
+                'filename' => $filename
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to save image to storage', [
+                'error' => $e->getMessage(),
+                'path' => $path
+            ]);
+            throw new \RuntimeException('Failed to save file: ' . $e->getMessage());
+        }
 
         return $path;
     }
