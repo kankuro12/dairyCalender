@@ -1,0 +1,80 @@
+// Date Banner Component Styles
+.date-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.date-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: white;
+    flex: 1;
+}
+
+.nepali-date {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.english-day {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.today-event,
+.nepali-tithi,
+.current-time,
+.english-date {
+    font-size: 14px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+
+    strong {
+        font-weight: 600;
+    }
+
+    span {
+        font-weight: 400;
+    }
+}
+
+.ads-slider {
+    width: 400px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    &.is-ready {
+        opacity: 1;
+    }
+
+    .ad-item {
+        width: 100%;
+        height: 150px;
+        display: none;
+
+        &:first-child {
+            display: block;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    }
+
+    &.slick-initialized .ad-item {
+        display: block;
+    }
+}

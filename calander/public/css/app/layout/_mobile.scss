@@ -1,0 +1,27 @@
+@media (max-width: 768px) {
+    // Remove all horizontal scrolling
+    html, body {
+        overflow-x: hidden;
+        max-width: 100%;
+        position: relative;
+    }
+
+    * {
+        max-width: 100%;
+    }
+
+    // Main container adjustments
+    .container {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    // Ensure all sections stack vertically
+    section,
+    .section {
+        width: 100%;
+        margin: 0;
+        padding: 10px;
+    }
+}

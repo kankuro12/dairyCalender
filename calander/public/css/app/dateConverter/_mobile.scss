@@ -1,15 +1,223 @@
-  @media (max-width: 640px) {
-            .dateConverter {
-                padding: 1.5rem;
-            }
+// Date Converter Mobile Styles - Complete Rewrite
+@media (max-width: 768px) {
+    .dateConverter {
+        width: 100% !important;
+        max-width: 100%;
+        padding: 25px 20px;
+        margin: 0 0 20px 0;
+        box-sizing: border-box;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
 
-            .dateConverter h3 {
-                font-size: 1.5rem;
-            }
+    // Heading
+    .dateConverter h3 {
+        font-size: 22px !important;
+        font-weight: 600 !important;
+        margin: 0 0 25px 0 !important;
+        text-align: center;
+        color: white;
+        letter-spacing: -0.3px;
+    }
 
-            .dateConverter input[type="radio"]+label {
-                display: block;
-                margin: 0.5rem 0;
-                text-align: center;
-            }
-        }
+    // Radio button container
+    .dateConverter > div:first-of-type {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    // Hide all br tags
+    .dateConverter br {
+        display: none !important;
+    }
+
+    // Radio buttons styling
+    .dateConverter input[type="radio"] {
+        display: none;
+    }
+
+    .dateConverter input[type="radio"] + label {
+        display: block !important;
+        width: 100% !important;
+        padding: 14px 20px !important;
+        margin: 0 !important;
+        background: rgba(255, 255, 255, 0.2) !important;
+        border: 2px solid transparent !important;
+        border-radius: 30px !important;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500 !important;
+        font-size: 16px !important;
+        text-align: center;
+        color: white;
+        backdrop-filter: blur(10px);
+        box-sizing: border-box;
+    }
+
+    .dateConverter input[type="radio"]:checked + label {
+        background: white !important;
+        color: #667eea !important;
+        border-color: white !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+        transform: scale(1.02);
+    }
+
+    .dateConverter input[type="radio"] + label:active {
+        transform: scale(0.98);
+    }
+
+    // Input groups container
+    .converter-inputs {
+        width: 100% !important;
+        margin-top: 25px !important;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    // Individual input group
+    .input-group {
+        width: 100% !important;
+        margin-bottom: 0 !important;
+    }
+
+    .input-group label {
+        display: block !important;
+        margin-bottom: 10px !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        color: white;
+        opacity: 0.95;
+    }
+
+    .input-group input[type="text"],
+    .input-group input[type="date"] {
+        width: 100% !important;
+        padding: 14px 16px !important;
+        font-size: 16px !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 12px !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        color: #333 !important;
+        box-sizing: border-box !important;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .input-group input[type="text"]:focus,
+    .input-group input[type="date"]:focus {
+        border-color: white !important;
+        background: white !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .input-group input[type="text"]::placeholder {
+        color: #999;
+        opacity: 1;
+    }
+
+    // Convert button
+    #convertBtn {
+        width: 100% !important;
+        padding: 16px 24px !important;
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        background: white !important;
+        color: #667eea !important;
+        border: none !important;
+        border-radius: 12px !important;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+        margin: 20px 0 18px 0 !important;
+        box-sizing: border-box;
+    }
+
+    #convertBtn:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    // Result display
+    .result {
+        min-height: 60px !important;
+        padding: 16px 18px !important;
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-radius: 12px !important;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.2) !important;
+        font-size: 17px !important;
+        font-weight: 500 !important;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        word-break: break-word;
+        box-sizing: border-box;
+    }
+
+    .result:not(:empty) {
+        background: rgba(255, 255, 255, 0.25) !important;
+        border-color: rgba(255, 255, 255, 0.4) !important;
+    }
+}
+
+// Small mobile devices
+@media (max-width: 480px) {
+    .dateConverter {
+        padding: 20px 16px;
+        border-radius: 14px;
+    }
+
+    .dateConverter h3 {
+        font-size: 20px !important;
+        margin: 0 0 20px 0 !important;
+    }
+
+    .dateConverter > div:first-of-type {
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .dateConverter input[type="radio"] + label {
+        padding: 12px 18px !important;
+        font-size: 15px !important;
+        border-radius: 25px !important;
+    }
+
+    .converter-inputs {
+        gap: 15px;
+        margin-top: 20px !important;
+    }
+
+    .input-group label {
+        margin-bottom: 8px !important;
+        font-size: 14px !important;
+    }
+
+    .input-group input[type="text"],
+    .input-group input[type="date"] {
+        padding: 12px 14px !important;
+        font-size: 15px !important;
+        border-radius: 10px !important;
+    }
+
+    #convertBtn {
+        padding: 14px 20px !important;
+        font-size: 16px !important;
+        border-radius: 10px !important;
+        margin: 16px 0 15px 0 !important;
+    }
+
+    .result {
+        min-height: 55px !important;
+        padding: 14px 16px !important;
+        font-size: 16px !important;
+        border-radius: 10px !important;
+    }
+}

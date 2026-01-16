@@ -1,4 +1,8 @@
+@forward'./layout/mobile';
 @forward'./app/mobile';
+@forward'./grid/mobile';
+@forward'./nepalidate/mobile';
+@forward'./calendarNav/mobile';
 @forward'./slider/mobile';
 @forward'./upcomingdays/mobile';
 @forward'./calanderHeader/mobile';
@@ -6,3 +10,4 @@
 @forward'./calender/mobile';
 @forward'./dateConverter/mobile';
 @forward'./holidayCard/mobile';
+@forward'./eventPopup/mobile';

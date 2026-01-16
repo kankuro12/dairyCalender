@@ -1,0 +1,69 @@
+@media (max-width: 768px) {
+    // Remove horizontal overflow
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .grid-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        overflow-x: hidden;
+    }
+
+    .items {
+        width: 100%;
+        margin: 0;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    // Mobile layout order as requested:
+    // 1. Navbar (handled by app/mobile)
+
+    // 2. Date banner
+    .date-banner {
+        order: 2;
+    }
+
+    // 3. Nepali News Slider
+    .slider-container {
+        order: 3;
+    }
+
+    // 4. Search nav / Announcement
+    .calendar-nav {
+        order: 4;
+    }
+
+    // 5. Calendar
+    .calendar {
+        order: 5;
+    }
+
+    // 6. Upcoming days
+    .module {
+        order: 6;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    // 7. Date converter
+    .dateConverter {
+        order: 7;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    // 8. Holidays
+    .cta-button {
+        order: 8;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+}
