@@ -17,7 +17,7 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (! Auth::guard('admin')->check()) {
-            return redirect()->route('calendar.admin.login.form');
+            return redirect()->route('admin.login.form');
         }
         return $next($request);
     }

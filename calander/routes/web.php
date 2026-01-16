@@ -6,36 +6,114 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 
-//language ko lagi
 
+
+
+/**
+ * Language Switcher
+ * Allows users to switch between English and Nepali languages
+ */
 Route::get('/lang/{locale}', function ($locale) {
-    if (! in_array($locale,['en','np'])) {
+    if (!in_array($locale, ['en', 'np'])) {
         abort(400);
     }
-    session()->put('locale',$locale);
+    session()->put('locale', $locale);
     return redirect()->back();
 })->name('lang.switch');
 
-Route::get('/admin/login', [AdminAuthController::class, 'adminLoginForm'])->name('calendar.admin.login.form');
-Route::post('/admin/login/submit', [AdminAuthController::class, 'adminLoginSubmit'])->name('admin.login.submit');
+/**
+ * Public Calendar Routes
+ * Display calendar for public users
+ */
+Route::prefix('calendar')->name('calendar.')->group(function () {
+    // Calendar view with optional year/month
+    Route::get('/{year?}/{month?}', [CalendarController::class, 'index'])
+        ->name('index')
+        ->where(['year' => '\d{4}', 'month' => '0?[1-9]|1[0-2]']);
 
-// Protected admin routes
-Route::middleware(['admin'])->name('admin.')->group(function () {
-    Route::match(['get','post'], '/admin', [CalendarController::class, 'adminIndex'])->name('index');
-    Route::get('/admin/load-event', [CalendarController::class, 'loadEvents'])->name('loadEvents');
-    Route::match(['get','post'], '/admin/add-month-data/{month}', [CalendarController::class, 'addMonthData'])->name('add.month.data');
-    Route::get('/admin/api/show-month-data/{month}', [CalendarController::class, 'showMonthData'])->name('show.month.data.api');
-    Route::get('/admin/months-data/{year}', [CalendarController::class, 'getMonthsDataByYear'])->name('months.data.by.year');
-    Route::get('/admin/stats/{year}', [CalendarController::class, 'getStatsByYear'])->name('stats.by.year');
-    Route::get('/events/logo', [SettingController::class, 'index'])->name('events.logo');
-    Route::post('/events/logo', [SettingController::class, 'store'])->name('events.logo.store');
-    Route::get('/admin/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
-    Route::post('/admin/announcements', [AnnouncementController::class, 'store'])->name('announcements.store');
-    Route::put('/admin/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('announcements.update');
-    Route::delete('/admin/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
+    // Get calendar data via AJAX
+    Route::get('/data/{year}/{month}', [CalendarController::class, 'getCalendarData'])
+        ->name('data');
+
+    // Get specific day details
+    Route::get('/days/{bsDate}', [CalendarController::class, 'getDayDetails'])
+        ->name('day.details');
 });
 
-Route::get('/calendar/{year?}/{month?}', [CalendarController::class, 'index'])->name('calendar.index')->where(['year'=> '\d{4}','month'=>'0?[1-9]|1[0-2]']);
-Route::get('/calendar/data/{year}/{month}', [CalendarController::class, 'getCalendarData'])->name('calendar.data');
-Route::get('/calendar/days/{bsDate}', [CalendarController::class, 'getDayDetails'])->name('calendar.day.details');
+
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Login routes (guest only)
+    Route::middleware('guest:admin')->group(function () {
+        Route::get('/login', [AdminAuthController::class, 'adminLoginForm'])
+            ->name('login.form');
+
+        Route::post('/login/submit', [AdminAuthController::class, 'adminLoginSubmit'])
+            ->name('login.submit');
+    });
+});
+
+
+
+Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+
+
+    // Dashboard
+    Route::match(['get', 'post'], '/', [CalendarController::class, 'adminIndex'])
+        ->name('index');
+
+    // Get statistics by year (AJAX)
+    Route::get('/stats/{year}', [CalendarController::class, 'getStatsByYear'])
+        ->name('stats.by.year');
+
+    // Load events (AJAX)
+    Route::get('/load-event', [CalendarController::class, 'loadEvents'])
+        ->name('load.events');
+
+
+    // Logout
+    Route::post('/logout', [AdminAuthController::class, 'adminLogout'])
+        ->name('logout');
+
+
+    // Add/Edit month data
+    Route::match(['get', 'post'], '/add-month-data/{month}', [CalendarController::class, 'addMonthData'])
+        ->name('month.data.edit');
+
+    // Get month data by year (AJAX)
+    Route::get('/months-data/{year}', [CalendarController::class, 'getMonthsDataByYear'])
+        ->name('months.data.by.year');
+
+    // Show month data API (AJAX)
+    Route::get('/api/month-data/{month}', [CalendarController::class, 'showMonthData'])
+        ->name('month.data.show');
+
+
+
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/logo', [SettingController::class, 'index'])
+            ->name('logo');
+
+        Route::post('/logo', [SettingController::class, 'store'])
+            ->name('logo.store');
+    });
+
+
+
+    Route::prefix('announcements')->name('announcements.')->group(function () {
+        // List and create
+        Route::get('/', [AnnouncementController::class, 'index'])
+            ->name('index');
+
+        Route::post('/', [AnnouncementController::class, 'store'])
+            ->name('store');
+
+        // Update and delete
+        Route::put('/{announcement}', [AnnouncementController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/{announcement}', [AnnouncementController::class, 'destroy'])
+            ->name('destroy');
+    });
+});
 

@@ -38,6 +38,6 @@ class AuthController extends Controller
         auth()->guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('calendar.admin.login.form');
+        return redirect()->route('admin.login.form');
     }
 }

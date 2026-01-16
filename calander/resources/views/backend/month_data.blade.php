@@ -32,7 +32,7 @@
             </div>
 
             <div class="card-body">
-                <form method="POST" action="{{ route('admin.add.month.data', ['month' => $month]) }}" id="monthForm">
+                <form method="POST" action="{{ route('admin.month.data.edit', ['month' => $month]) }}" id="monthForm">
                     @csrf
                     <input type="hidden" name="month" value="{{ $month }}">
 
@@ -188,7 +188,7 @@
                     showLoader();
                     toggleEditing(true);
                     $.ajax({
-                        url: `/admin/api/show-month-data/${month}`,
+                        url: `/admin/api/month-data/${month}`,
                         type: 'GET',
                         success: function(response) {
                             populateTable(response);

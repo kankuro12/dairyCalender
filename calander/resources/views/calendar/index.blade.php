@@ -290,19 +290,36 @@
             </ul>
             <div class="popup-box" id="calendarPopup">
                 <div class="popup-header">
-                    <span id="popup-title"></span>
-                    <button class="popup-close">&times;</button>
+                    <span id="popup-date" class="popup-date-title"></span>
+                    <button class="popup-close" id="popupCloseBtn">&times;</button>
                 </div>
 
                 <div class="popup-body">
-                    <div class="panchangaWrapper"></div>
+                    <div class="event-details">
+                        <div class="event-item" id="eventTitle">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span class="event-label">Event:</span>
+                            <span class="event-value">-</span>
+                        </div>
+                        <div class="event-item" id="eventTithi">
+                            <i class="fas fa-moon"></i>
+                            <span class="event-label">Tithi:</span>
+                            <span class="event-value">-</span>
+                        </div>
+                        <div class="event-item" id="eventHoliday">
+                            <i class="fas fa-star"></i>
+                            <span class="event-label">Holiday:</span>
+                            <span class="event-value">No</span>
+                        </div>
+                    </div>
 
-                    <div class="eventPopupWrapper"></div>
-
-                    <div class="notes">
-                        <h4>मेरो नोट</h4>
-                        <div class="notes-content"></div>
-                        <a class="edit-note">Add / Edit Note</a>
+                    <div class="notes-section">
+                        <h4 class="notes-title">
+                            <i class="fas fa-sticky-note"></i>
+                            मेरो नोट (My Notes)
+                        </h4>
+                        <textarea class="notes-textarea" placeholder="Add your notes here..." rows="4"></textarea>
+                        <p class="notes-hint">Note: This is a demo field. Notes are not saved.</p>
                     </div>
                 </div>
             </div>
@@ -310,6 +327,328 @@
         </div>
 
     </div>
+
+    <style>
+        /* Calendar Popup Styles */
+        .popup-box {
+            position: fixed;
+            display: none;
+            width: 360px;
+            max-width: 90vw;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            opacity: 0;
+            transform: scale(0.9) translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
+
+        .popup-box.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+            color: white;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .popup-date-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .popup-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            line-height: 1;
+            padding: 0;
+            flex-shrink: 0;
+        }
+
+        .popup-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .popup-body {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .popup-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .popup-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .popup-body::-webkit-scrollbar-thumb {
+            background: #7c3aed;
+            border-radius: 10px;
+        }
+
+        .popup-body::-webkit-scrollbar-thumb:hover {
+            background: #6d28d9;
+        }
+
+        .event-details {
+            margin-bottom: 20px;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .event-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .event-item:hover {
+            background: #e9ecef;
+            transform: translateX(4px);
+        }
+
+        .event-item i {
+            font-size: 16px;
+            color: #7c3aed;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .event-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+            min-width: 60px;
+            flex-shrink: 0;
+        }
+
+        .event-value {
+            color: #212529;
+            font-size: 14px;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .event-item.holiday .event-value {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .notes-section {
+            border-top: 2px solid #e9ecef;
+            padding-top: 16px;
+            margin-top: 20px;
+        }
+
+        .notes-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #495057;
+            margin: 0 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notes-title i {
+            color: #7c3aed;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.2s ease;
+            background: #f8f9fa;
+            min-height: 80px;
+            box-sizing: border-box;
+        }
+
+        .notes-textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .notes-hint {
+            margin: 8px 0 0 0;
+            font-size: 12px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .popup-overlay.show {
+            opacity: 1;
+        }
+
+        /* Tablet styles */
+        @media (max-width: 992px) {
+            .popup-box {
+                width: 90vw;
+                max-width: 400px;
+            }
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .popup-box {
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 16px 16px 0 0 !important;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto !important;
+                max-height: 85vh;
+            }
+
+            .popup-box.show {
+                transform: scale(1) translateY(0);
+            }
+
+            .popup-header {
+                padding: 14px 16px;
+                border-radius: 16px 16px 0 0;
+            }
+
+            .popup-date-title {
+                font-size: 15px;
+            }
+
+            .popup-close {
+                width: 30px;
+                height: 30px;
+                font-size: 22px;
+            }
+
+            .popup-body {
+                padding: 16px;
+                max-height: calc(85vh - 60px);
+            }
+
+            .event-item {
+                padding: 10px;
+                font-size: 13px;
+                gap: 8px;
+            }
+
+            .event-item i {
+                font-size: 14px;
+                width: 18px;
+            }
+
+            .event-label {
+                font-size: 13px;
+                min-width: 55px;
+            }
+
+            .event-value {
+                font-size: 13px;
+            }
+
+            .notes-section {
+                margin-top: 16px;
+                padding-top: 16px;
+            }
+
+            .notes-title {
+                font-size: 14px;
+            }
+
+            .notes-textarea {
+                font-size: 13px;
+                padding: 10px;
+                min-height: 70px;
+            }
+
+            .notes-hint {
+                font-size: 11px;
+            }
+        }
+
+        /* Small mobile */
+        @media (max-width: 480px) {
+            .popup-box {
+                max-height: 90vh;
+            }
+
+            .popup-header {
+                padding: 12px 14px;
+            }
+
+            .popup-date-title {
+                font-size: 14px;
+            }
+
+            .popup-body {
+                padding: 14px;
+                max-height: calc(90vh - 56px);
+            }
+
+            .event-item {
+                padding: 8px;
+                margin-bottom: 8px;
+            }
+
+            .notes-textarea {
+                min-height: 60px;
+            }
+        }
+    </style>
+
     <div class='items'>
         <div class="cta-button">
             <a href="#/" target="_self" class="holidays" id="holidays">{{ __('site.holidays') }}</a>
@@ -439,27 +778,206 @@
         }
 
         */
-    /* popup styles */
-
+    /* Popup Styles */
     .popup-box {
-        position: absolute;
+        position: fixed;
         display: none;
-        width: 300px;
-        background: #fff;
-        border-radius: 6px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-        z-index: 1000;
+        width: 360px;
+        max-width: 90vw;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        z-index: 10000;
+        opacity: 0;
+        transform: scale(0.9) translateY(-10px);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        overflow: hidden;
+    }
+
+    .popup-box.show {
+        opacity: 1;
+        transform: scale(1) translateY(0);
     }
 
     .popup-header {
         display: flex;
         justify-content: space-between;
-        padding: 10px 12px;
-        border-bottom: 1px solid #eee;
+        align-items: center;
+        padding: 16px 20px;
+        background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+        color: white;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .popup-date-title {
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .popup-close {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        font-size: 24px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        line-height: 1;
+        padding: 0;
+    }
+
+    .popup-close:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: rotate(90deg);
     }
 
     .popup-body {
+        padding: 20px;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    .event-details {
+        margin-bottom: 20px;
+    }
+
+    .event-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
         padding: 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        transition: all 0.2s ease;
+    }
+
+    .event-item:hover {
+        background: #e9ecef;
+        transform: translateX(4px);
+    }
+
+    .event-item i {
+        font-size: 16px;
+        color: #7c3aed;
+        width: 20px;
+        text-align: center;
+    }
+
+    .event-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 14px;
+        min-width: 60px;
+    }
+
+    .event-value {
+        color: #212529;
+        font-size: 14px;
+        flex: 1;
+    }
+
+    .event-item.holiday .event-value {
+        color: #dc3545;
+        font-weight: 600;
+    }
+
+    .notes-section {
+        border-top: 2px solid #e9ecef;
+        padding-top: 16px;
+    }
+
+    .notes-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #495057;
+        margin: 0 0 12px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .notes-title i {
+        color: #7c3aed;
+    }
+
+    .notes-textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        resize: vertical;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+    }
+
+    .notes-textarea:focus {
+        outline: none;
+        border-color: #7c3aed;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    .notes-hint {
+        margin: 8px 0 0 0;
+        font-size: 12px;
+        color: #6c757d;
+        font-style: italic;
+    }
+
+    /* Popup overlay for better UX */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 9999;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .popup-overlay.show {
+        opacity: 1;
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+        .popup-box {
+            width: calc(100vw - 32px);
+            max-width: none;
+            border-radius: 12px;
+        }
+
+        .popup-header {
+            padding: 14px 16px;
+        }
+
+        .popup-body {
+            padding: 16px;
+            max-height: 50vh;
+        }
+
+        .event-item {
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        .notes-textarea {
+            font-size: 13px;
+        }
     }
 
     /* holidays card */

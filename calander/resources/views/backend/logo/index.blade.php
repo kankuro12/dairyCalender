@@ -42,7 +42,7 @@
                 $sliderInitialUrls = $sliderInitialUrls ?? [];
             @endphp
 
-            <form action="{{ route('admin.events.logo.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.settings.logo.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="settings-grid">

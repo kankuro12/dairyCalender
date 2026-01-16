@@ -29,13 +29,27 @@
                    </a>
                </li>
                <li class='nav-item {{ request()->routeIs('admin.event.logo') ? 'active' : '' }}'>
-                   <a href='{{ route('admin.events.logo') }}' class='nav-link'>
+                   <a href='{{ route('admin.settings.logo') }}' class='nav-link'>
                        <i class='fas fa-image'></i>
                        <span>Event Logo</span>
                    </a>
                </li>
+
+               <!-- Account Section -->
+               <li class="nav-section-title">Account</li>
+
+               <li class="nav-item">
+                   <form method="POST" action="{{ route('admin.logout') }}" id="logoutForm">
+                       @csrf
+                       <a href="#" class="nav-link"
+                           onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">
+                           <i class="fas fa-sign-out-alt"></i>
+                           <span>Log out</span>
+                       </a>
+                   </form>
+               </li>
            </ul>
-           {{-- 
+           {{--
                <li class="nav-item">
                    <a href="#" class="nav-link">
                        <i class="fas fa-camera"></i>

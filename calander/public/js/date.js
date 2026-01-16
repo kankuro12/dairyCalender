@@ -253,10 +253,20 @@ function renderCalendarEvents(events) {
         if (!bsDate || !events[bsDate]) return;
         const eventData = events[bsDate];
         const adObj = NepaliFunctions.BS2AD(bsDate);
+
+        // Store event data in dataset for popup
+        if (eventData?.title) {
+            cell.dataset.eventTitle = eventData.title;
+        }
         if (eventData?.tithi) {
+            cell.dataset.eventTithi = eventData.tithi;
             let tithiSpan = cell.querySelector('.tithi');
             tithiSpan.innerText = eventData.tithi;
         }
+        if (eventData?.is_holiday) {
+            cell.dataset.isHoliday = '1';
+        }
+
         const eventSpan = cell.querySelector('.event');
         if (eventData?.title) {
             eventSpan.innerText = eventData.title;
@@ -653,13 +663,78 @@ document.querySelector('.calendar-dates').addEventListener('click', e => {
 
 function openCalendarPopup(cell) {
     const popup = document.getElementById('calendarPopup');
-    popup.querySelector('#popup-title').innerText = cell.dataset.bsDate;
+    const bsDate = cell.dataset.bsDate;
 
-    // get cell position relative to viewport
+    if (!bsDate) return;
+
+    // Get event data from cell dataset (more reliable than parsing spans)
+    const eventTitle = cell.dataset.eventTitle || '';
+    const tithi = cell.dataset.eventTithi || '';
+    const isHoliday = cell.dataset.isHoliday === '1' || cell.classList.contains('saturday') || cell.classList.contains('holiday');
+
+    // Parse BS date for display
+    const [year, month, day] = bsDate.split('-').map(Number);
+    const nepMonth = NepaliFunctions.BS.GetMonthInUnicode(month - 1);
+    const nepYear = NepaliFunctions.ConvertToUnicode(year);
+    const nepDay = NepaliFunctions.ConvertToUnicode(day);
+
+    // Get AD date
+    const adDateStr = NepaliFunctions.BS2AD(bsDate);
+    const adDate = adDateStr ? new Date(adDateStr) : null;
+    const adFormatted = adDate ? adDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    }) : '';
+
+    // Update popup content
+    const popupDateTitle = popup.querySelector('#popup-date');
+    popupDateTitle.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+            <div style="font-size: 16px;">${nepDay} ${nepMonth} ${nepYear}</div>
+            ${adFormatted ? `<div style="font-size: 12px; opacity: 0.9;">${adFormatted}</div>` : ''}
+        </div>
+    `;
+
+    // Update event details
+    const eventTitleItem = popup.querySelector('#eventTitle .event-value');
+    eventTitleItem.textContent = eventTitle || 'No event';
+
+    const eventTithiItem = popup.querySelector('#eventTithi .event-value');
+    eventTithiItem.textContent = tithi || '-';
+
+    const eventHolidayItem = popup.querySelector('#eventHoliday');
+    const eventHolidayValue = eventHolidayItem.querySelector('.event-value');
+    eventHolidayValue.textContent = isHoliday ? 'Yes' : 'No';
+    if (isHoliday) {
+        eventHolidayItem.classList.add('holiday');
+    } else {
+        eventHolidayItem.classList.remove('holiday');
+    }
+
+    // Clear notes textarea
+    const notesTextarea = popup.querySelector('.notes-textarea');
+    if (notesTextarea) {
+        notesTextarea.value = '';
+    }
+
+    // Create overlay if it doesn't exist
+    let overlay = document.getElementById('popupOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'popupOverlay';
+        overlay.className = 'popup-overlay';
+        document.body.appendChild(overlay);
+    }
+
+    // Get cell position relative to viewport
     const rect = cell.getBoundingClientRect();
 
-    // Ensure popup is measurable (offsetWidth/offsetHeight are 0 when display:none)
-    const previousVisibility = popup.style.visibility;
+    // Show overlay first
+    overlay.style.display = 'block';
+    setTimeout(() => overlay.classList.add('show'), 10);
+
+    // Ensure popup is measurable
     popup.style.display = 'block';
     popup.style.visibility = 'hidden';
     popup.style.top = '0px';
@@ -668,45 +743,114 @@ function openCalendarPopup(cell) {
     const popupWidth = popup.offsetWidth;
     const popupHeight = popup.offsetHeight;
 
-    const margin = 8;
+    const margin = 16;
     const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+    const viewportHeight = document.documentElement.clientHeight || window.innerHeight;
 
-    // Position relative to the viewport for consistent behavior regardless of offsetParent
+    // Position relative to viewport for fixed positioning
     popup.style.position = 'fixed';
 
-    // Desired position in *viewport* coordinates
-    const desiredViewportTopAbove = rect.top - popupHeight - margin;
-    const desiredViewportTopBelow = rect.bottom + margin;
-    const hasRoomAbove = desiredViewportTopAbove >= margin;
-    const viewportTop = hasRoomAbove ? desiredViewportTopAbove : desiredViewportTopBelow;
+    // Mobile: Center and position at bottom
+    if (viewportWidth <= 768) {
+        popup.style.top = 'auto';
+        popup.style.bottom = '0';
+        popup.style.left = '0';
+        popup.style.right = '0';
+        popup.style.width = '100%';
+        popup.style.maxWidth = '100%';
+        popup.style.borderRadius = '16px 16px 0 0';
+    } else {
+        // Desktop: Smart positioning
+        const desiredViewportTopAbove = rect.top - popupHeight - margin;
+        const desiredViewportTopBelow = rect.bottom + margin;
+        const hasRoomAbove = desiredViewportTopAbove >= margin;
+        const hasRoomBelow = desiredViewportTopBelow + popupHeight <= viewportHeight - margin;
 
-    const desiredViewportLeftCentered = rect.left + rect.width / 2 - popupWidth / 2;
-    const minViewportLeft = margin;
-    const maxViewportLeft = viewportWidth - popupWidth - margin;
-    const viewportLeft = Math.max(minViewportLeft, Math.min(desiredViewportLeftCentered, maxViewportLeft));
+        let viewportTop;
+        if (hasRoomAbove) {
+            viewportTop = desiredViewportTopAbove;
+        } else if (hasRoomBelow) {
+            viewportTop = desiredViewportTopBelow;
+        } else {
+            viewportTop = Math.max(margin, (viewportHeight - popupHeight) / 2);
+        }
 
-    popup.style.top = `${viewportTop}px`;
-    popup.style.left = `${viewportLeft}px`;
-    popup.style.visibility = previousVisibility || '';
-    popup.style.display = 'block';
+        const desiredViewportLeftCentered = rect.left + rect.width / 2 - popupWidth / 2;
+        const minViewportLeft = margin;
+        const maxViewportLeft = viewportWidth - popupWidth - margin;
+        const viewportLeft = Math.max(minViewportLeft, Math.min(desiredViewportLeftCentered, maxViewportLeft));
 
-    // Simple click-outside-to-close (managed from within this function only)
-    if (popup._outsideClickHandler) {
-        document.removeEventListener('click', popup._outsideClickHandler, true);
+        popup.style.top = `${viewportTop}px`;
+        popup.style.left = `${viewportLeft}px`;
+        popup.style.bottom = 'auto';
+        popup.style.right = 'auto';
+        popup.style.width = '360px';
+        popup.style.maxWidth = '90vw';
+        popup.style.borderRadius = '16px';
     }
-    popup._outsideClickHandler = function (e) {
-        const clickedInsidePopup = popup.contains(e.target);
-        const clickedOnCell = cell.contains(e.target);
-        if (!clickedInsidePopup && !clickedOnCell) {
+
+    popup.style.visibility = 'visible';
+
+    // Trigger animation
+    setTimeout(() => popup.classList.add('show'), 10);
+
+    // Close button handler
+    const closeBtn = popup.querySelector('#popupCloseBtn');
+    const closePopup = () => {
+        popup.classList.remove('show');
+        overlay.classList.remove('show');
+        setTimeout(() => {
             popup.style.display = 'none';
+            overlay.style.display = 'none';
+        }, 300);
+
+        if (popup._outsideClickHandler) {
             document.removeEventListener('click', popup._outsideClickHandler, true);
             popup._outsideClickHandler = null;
         }
     };
-    // Defer binding to avoid immediately closing on the opening click event
-    setTimeout(() => {
-        document.addEventListener('click', popup._outsideClickHandler, true);
-    }, 0);
+
+    // Remove old listeners
+    if (closeBtn._clickHandler) {
+        closeBtn.removeEventListener('click', closeBtn._clickHandler);
+    }
+    closeBtn._clickHandler = closePopup;
+    closeBtn.addEventListener('click', closeBtn._clickHandler);
+
+    // Click overlay to close
+    if (overlay._clickHandler) {
+        overlay.removeEventListener('click', overlay._clickHandler);
+    }
+    overlay._clickHandler = closePopup;
+    overlay.addEventListener('click', overlay._clickHandler);
+
+    // Click outside to close (desktop only)
+    if (viewportWidth > 768) {
+        if (popup._outsideClickHandler) {
+            document.removeEventListener('click', popup._outsideClickHandler, true);
+        }
+        popup._outsideClickHandler = function (e) {
+            const clickedInsidePopup = popup.contains(e.target);
+            const clickedOnCell = cell.contains(e.target);
+            const clickedOnOverlay = e.target === overlay;
+            if (!clickedInsidePopup && !clickedOnCell && !clickedOnOverlay) {
+                closePopup();
+            }
+        };
+
+        setTimeout(() => {
+            document.addEventListener('click', popup._outsideClickHandler, true);
+        }, 100);
+    }
+
+    // ESC key to close
+    const escHandler = (e) => {
+        if (e.key === 'Escape') {
+            closePopup();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
 }
 function renderHolidaysCard(events) {
     const holidaysBtn = document.getElementById('holidays');
