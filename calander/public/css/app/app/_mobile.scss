@@ -17,12 +17,12 @@
                 padding: 0 16px;
             }
 
-            .date-banner {
-                flex-direction: column;
-                align-items: stretch;
-            }
+            // .date-banner {
+            //     flex-direction: column;
+            //     align-items: stretch;
+            // }
 
-            .date-content,
+
             .ads-slider {
                 flex: 0 0 auto;
                 width: 100%;
@@ -34,27 +34,27 @@
             }
         }
 
-        .nepali-date {
-            font-size: 2.0em;
+        // .nepali-date {
+        //     font-size: 2.0em;
 
 
-            line-height: 1.2;
-        }
+        //     line-height: 1.2;
+        // }
 
-        .english-day {
-            font-size: 2.0em;
-            margin-top: -10px;
+        // .english-day {
+        //     font-size: 2.0em;
+        //     margin-top: -10px;
 
-            /* margin-bottom: 12px; */
-            opacity: 0.95;
-        }
+        //     /* margin-bottom: 12px; */
+        //     opacity: 0.95;
+        // }
 
-        .nepali-tithi {
-            font-size: 1.3rem;
-            /* font-weight: 500; */
-            /* margin-bottom: 6px; */
-            opacity: 0.9;
-        }
+        // .nepali-tithi {
+        //     font-size: 1.3rem;
+        //     /* font-weight: 500; */
+        //     /* margin-bottom: 6px; */
+        //     opacity: 0.9;
+        // }
 
         .paksya-info {
             font-size: 1.3rem;

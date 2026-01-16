@@ -1,13 +1,13 @@
 // Date Banner Component Styles
-.date-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    gap: 20px;
-}
+// .date-banner {
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+//     padding: 20px;
+//     border-radius: 8px;
+//     margin-bottom: 20px;
+//     gap: 20px;
+// }
 
 .date-content {
     display: flex;
@@ -18,12 +18,12 @@
 }
 
 .nepali-date {
-    font-size: 24px;
+    font-size: 40px;
     font-weight: 600;
 }
 
 .english-day {
-    font-size: 18px;
+    font-size: 35px;
     font-weight: 500;
 }
 
@@ -31,9 +31,9 @@
 .nepali-tithi,
 .current-time,
 .english-date {
-    font-size: 14px;
+    font-size: 15px;
     display: flex;
-    gap: 5px;
+    gap: 1px;
     align-items: center;
 
     strong {
