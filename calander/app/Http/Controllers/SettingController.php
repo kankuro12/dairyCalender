@@ -10,14 +10,11 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Setting;
 class SettingController extends Controller
 {
-    public function __construct()
-    {
-        // no-op constructor — ImageManager and GD removed per requirements
-    }
+    // public function __construct()
+    // {
+    //     // no-op constructor — ImageManager and GD removed per requirements
+    // }
 
-    /* ===============================
-     * SHOW SETTINGS PAGE
-     * =============================== */
     public function index()
     {
         $settings = Setting::pluck('value', 'key')->toArray();
@@ -61,9 +58,7 @@ class SettingController extends Controller
         return view('backend.logo.index', compact('settings', 'sliders', 'imageUrls', 'sliderInitialUrls'));
     }
 
-    /* ===============================
-     * SAVE SETTINGS
-     * =============================== */
+
     public function store(Request $request)
     {
         Log::info('Settings form submitted', [
@@ -128,7 +123,7 @@ class SettingController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             return redirect()
-                ->route('admin.events.logo')
+                ->route('admin.settings.logo')
                 ->withErrors(['error' => $e->getMessage()])
                 ->withInput();
         } catch (\Exception $e) {
@@ -139,20 +134,18 @@ class SettingController extends Controller
                 'line' => $e->getLine()
             ]);
             return redirect()
-                ->route('admin.events.logo')
+                ->route('admin.settings.logo')
                 ->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()])
                 ->withInput();
         }
 
         Log::info('Settings saved successfully');
         return redirect()
-            ->route('admin.events.logo')
+            ->route('admin.settings.logo')
             ->with('success', 'Settings saved successfully');
     }
 
-    /* ===============================
-     * LOGO HANDLER
-     * =============================== */
+
     private function handleLogo(Request $request): void
     {
         $key = 'logo_image';
@@ -175,9 +168,7 @@ class SettingController extends Controller
         // cache will be rebuilt by caller
     }
 
-    /* ===============================
-     * SLIDER HANDLER
-     * =============================== */
+
     private function handleSliders(Request $request): void
     {
         $allSettings = Setting::pluck('value', 'key')->toArray();
@@ -253,8 +244,7 @@ class SettingController extends Controller
      * =============================== */
     private function processImage($file): string
     {
-        // Simplified: store uploaded file as-is under `settings/` on the public disk.
-        // This removes the need for Intervention/Image and GD extensions.
+
         Log::info('Processing image upload', [
             'original_name' => $file->getClientOriginalName(),
             'size' => $file->getSize(),
@@ -310,9 +300,6 @@ class SettingController extends Controller
         return $path;
     }
 
-    /* ===============================
-     * COMPACT SLIDERS (slider1..N)
-     * =============================== */
     private function compactSliders(): void
     {
         $settings = Setting::pluck('value', 'key')->toArray();

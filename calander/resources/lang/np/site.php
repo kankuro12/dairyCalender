@@ -21,4 +21,8 @@ return[
     'select_nepali_date'=>'नेपाली मिति चयन गर्नुहोस्',
     'select_english_date'=>'अंग्रेजी मिति चयन गर्नुहोस्',
     'English'=>'अंग्रेजी',
+    'today'=>'आज',
+    'event'=>'कार्यक्रम',
+    'tithi'=>'तिथि',
+    'english_date'=>'अंग्रेजी मिति',
     ];

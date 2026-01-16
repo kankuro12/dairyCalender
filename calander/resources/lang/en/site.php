@@ -21,5 +21,9 @@ return[
     'select_nepali_date'=>'Select Nepali Date',
     'select_english_date'=>'Select English Date',
     'English'=>'English',
+    'today'=>'Today',
+    'event'=>'Event',
+    'tithi'=>'Tithi',
+    'english_date'=>'English Date',
 
 ];
