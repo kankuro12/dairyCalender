@@ -269,7 +269,9 @@ function renderCalendarEvents(events) {
 
         const eventSpan = cell.querySelector('.event');
         if (eventData?.title) {
-            eventSpan.innerText = eventData.title;
+            eventSpan.innerText = eventData.title.length > 50
+                ? eventData.title.substring(0, 50) + '...'
+                : eventData.title;
         }
 
         if (eventData?.is_holiday) {

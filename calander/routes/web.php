@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 
 
@@ -38,6 +39,16 @@ Route::prefix('calendar')->name('calendar.')->group(function () {
     // Get specific day details
     Route::get('/days/{bsDate}', [CalendarController::class, 'getDayDetails'])
         ->name('day.details');
+});
+
+/**
+ * Public News Routes
+ * Display news articles for public users
+ */
+Route::prefix('news')->name('news.')->group(function () {
+    // Single news detail page
+    Route::get('/{id}', [NewsController::class, 'show'])
+        ->name('show');
 });
 
 
@@ -114,6 +125,26 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
 
         Route::delete('/{announcement}', [AnnouncementController::class, 'destroy'])
             ->name('destroy');
+    });
+
+    Route::prefix('news')->name('news.')->group(function () {
+        // List and create
+        Route::get('/', [NewsController::class, 'index'])
+            ->name('index');
+
+        Route::post('/', [NewsController::class, 'store'])
+            ->name('store');
+
+        // Update and delete
+        Route::put('/{news}', [NewsController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/{news}', [NewsController::class, 'destroy'])
+            ->name('destroy');
+
+        // Fetch from API
+        Route::post('/fetch-api', [NewsController::class, 'fetchFromApi'])
+            ->name('fetch-api');
     });
 });
 

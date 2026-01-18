@@ -84,10 +84,10 @@
             @include('calendar.layout.partials.slider')
             @include('calendar.index')
         </div>
-        <div class="nepali">
+        {{-- <div class="nepali">
             <input type="text" id="nepali-datepicker" placeholder="Select Nepali Date"
                 style="padding:10px;font-size:16px;">
-        </div>
+        </div> --}}
     </div>
 
 
@@ -375,12 +375,12 @@
                 this.cacheDom();
                 this.initClock();
                 this.loadTodayInfo();
-                this.initSlider();
+
                 this.bindLanguageSwitcher();
             },
 
             cacheDom() {
-                this.$adsSlider = $('.ads-slider');
+
                 this.$nepaliDate = $('#nepaliDate');
                 this.$englishDay = $('#englishDay');
                 this.$englishDate = $('#engDateValue');

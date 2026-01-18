@@ -5,6 +5,7 @@ use Pratiksh\Nepalidate\Services\NepaliDate;
 use Illuminate\Support\Facades\Http;
 use carbon\carbon;
 use App\Models\CalendarEvent;
+use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
@@ -33,9 +34,23 @@ class CalendarController extends Controller
         ->get();
 });
 
+        // Get news items for slider
+        $showNewsSection = setting('show_news_section', true);
+        $newsItems = collect();
+
+        if ($showNewsSection) {
+            $newsItems = Cache::rememberForever('news_slider', function() {
+                return News::active()
+                    ->published()
+                    ->byPriority()
+                    ->limit(15)
+                    ->get();
+            });
+        }
+
     //    dd($settings);
         // dd($NepaliDate,$now,$detailsnm);
-        return view('calendar.layout.app',compact('announcements','year','month'));
+        return view('calendar.layout.app',compact('announcements','year','month','newsItems','showNewsSection'));
     }
     public function adminIndex(Request $request){
         if($request->isMethod('post')){
@@ -44,14 +59,25 @@ class CalendarController extends Controller
 
         // Get current Nepali year from JavaScript NepaliFunction (we'll pass it from frontend)
         // For now, get it from the first available event or use a default
-        $currentBsYear = CalendarEvent::orderBy('bs_year', 'desc')->value('bs_year') ?? 2082;
+        $currentBsYear = Cache::rememberForever('current_bs_year', function() {
+            return CalendarEvent::orderBy('bs_year', 'desc')->value('bs_year') ?? 2082;
+        });
 
         // Get statistics for dashboard - filtered by current BS year
-        $totalEvents = CalendarEvent::where('bs_year', $currentBsYear)->count();
-        $totalHolidays = CalendarEvent::where('bs_year', $currentBsYear)
-            ->where('is_holiday', true)
-            ->count();
-        $activeAnnouncements = DB::table('announcements')->where('status', true)->count();
+        $dashboardCacheKey = "dashboard_stats_{$currentBsYear}";
+        $dashboardStats = Cache::rememberForever($dashboardCacheKey, function() use ($currentBsYear) {
+            return [
+                'totalEvents' => CalendarEvent::where('bs_year', $currentBsYear)->count(),
+                'totalHolidays' => CalendarEvent::where('bs_year', $currentBsYear)
+                    ->where('is_holiday', true)
+                    ->count(),
+                'activeAnnouncements' => DB::table('announcements')->where('status', true)->count()
+            ];
+        });
+
+        $totalEvents = $dashboardStats['totalEvents'];
+        $totalHolidays = $dashboardStats['totalHolidays'];
+        $activeAnnouncements = $dashboardStats['activeAnnouncements'];
 
         // Get month names in Nepali
         $nepaliMonths = [
@@ -70,11 +96,14 @@ class CalendarController extends Controller
         ];
 
         // Get event counts per month for current year only
-        $eventCounts = CalendarEvent::selectRaw('bs_month, COUNT(*) as count')
-            ->where('bs_year', $currentBsYear)
-            ->groupBy('bs_month')
-            ->pluck('count', 'bs_month')
-            ->toArray();
+        $eventCountsCacheKey = "event_counts_{$currentBsYear}";
+        $eventCounts = Cache::rememberForever($eventCountsCacheKey, function() use ($currentBsYear) {
+            return CalendarEvent::selectRaw('bs_month, COUNT(*) as count')
+                ->where('bs_year', $currentBsYear)
+                ->groupBy('bs_month')
+                ->pluck('count', 'bs_month')
+                ->toArray();
+        });
 
         return view('backend.app', compact(
             'totalEvents',
@@ -118,6 +147,13 @@ class CalendarController extends Controller
                 ]
                 );
          }
+
+         // Clear relevant caches after updating calendar data
+         $year = $request->query('year');
+         Cache::forget("calendar_data_{$year}_{$month}");
+         Cache::forget("months_data_{$year}");
+         Cache::forget("stats_{$year}");
+
          return back()->with('success','Month data saved successfully.');
 
         }
@@ -168,19 +204,31 @@ class CalendarController extends Controller
         return response()->json($dayByDate);
     }
     public function getCalendarData($year, $month){
-        $events =DB::table('calendar_events')->where('bs_year', $year)->where('bs_month',$month)->get()->keyBy(function($item){
-            return sprintf('%04d-%02d-%02d', $item->bs_year, $item->bs_month, $item->bs_day);
+        $cacheKey = "calendar_data_{$year}_{$month}";
+
+        $events = Cache::rememberForever($cacheKey, function() use ($year, $month) {
+            return DB::table('calendar_events')
+                ->where('bs_year', $year)
+                ->where('bs_month', $month)
+                ->get()
+                ->keyBy(function($item){
+                    return sprintf('%04d-%02d-%02d', $item->bs_year, $item->bs_month, $item->bs_day);
+                });
         });
+
         return response()->json($events);
     }
 
     public function getMonthsDataByYear($year){
-        // Get event counts per month for the selected year
-        $eventCounts = CalendarEvent::selectRaw('bs_month, COUNT(*) as count')
-            ->where('bs_year', $year)
-            ->groupBy('bs_month')
-            ->pluck('count', 'bs_month')
-            ->toArray();
+        $cacheKey = "months_data_{$year}";
+
+        $eventCounts = Cache::rememberForever($cacheKey, function() use ($year) {
+            return CalendarEvent::selectRaw('bs_month, COUNT(*) as count')
+                ->where('bs_year', $year)
+                ->groupBy('bs_month')
+                ->pluck('count', 'bs_month')
+                ->toArray();
+        });
 
         return response()->json([
             'year' => $year,
@@ -189,16 +237,21 @@ class CalendarController extends Controller
     }
 
     public function getStatsByYear($year){
-        // Get statistics for the specified year
-        $totalEvents = CalendarEvent::where('bs_year', $year)->count();
-        $totalHolidays = CalendarEvent::where('bs_year', $year)
-            ->where('is_holiday', true)
-            ->count();
+        $cacheKey = "stats_{$year}";
+
+        $stats = Cache::rememberForever($cacheKey, function() use ($year) {
+            return [
+                'totalEvents' => CalendarEvent::where('bs_year', $year)->count(),
+                'totalHolidays' => CalendarEvent::where('bs_year', $year)
+                    ->where('is_holiday', true)
+                    ->count()
+            ];
+        });
 
         return response()->json([
             'year' => $year,
-            'totalEvents' => $totalEvents,
-            'totalHolidays' => $totalHolidays
+            'totalEvents' => $stats['totalEvents'],
+            'totalHolidays' => $stats['totalHolidays']
         ]);
     }
 }

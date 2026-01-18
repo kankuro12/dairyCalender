@@ -1,145 +1,53 @@
-<div class="slider-container">
-    <h2 class="slider-header">{{ __('site.Nepali') }} {{ __('site.News') }}</h2>
+@if ($showNewsSection && $newsItems->count() > 0)
+    <div class="slider-container">
+        <h2 class="slider-header">{{ __('site.Nepali') }} {{ __('site.News') }}</h2>
 
-    <div class="slider-wrapper">
-        <button type="button" class="nav-button nav-prev" id="prevBtn" aria-label="Previous">
-            <span aria-hidden="true"><i class="fa-solid fa-angle-left" style="margin-left:2px "></i></span>
-        </button>
+        <div class="slider-wrapper">
+            <button type="button" class="nav-button nav-prev" id="prevBtn" aria-label="Previous">
+                <span aria-hidden="true"><i class="fa-solid fa-angle-left" style="margin-left:2px "></i></span>
+            </button>
 
-        <div class="slider-track" id="sliderTrack">
-
-            <div class="slide-item">
-                <img src="https://images.unsplash.com/photo-1464746133101-a2c3f88e0dd9?w=500&h=400&fit=crop"
-                    alt="News">
-                <div class="slide-overlay">
-                    <div class="slide-title">नेपालमा तुल्लोदेखिमा सिद्धार्थ देवी भारतको</div>
-                    <div class="slide-sources">
-                        <div class="source-icon" style="background: #1DA1F2;">🐦</div>
-                        <div class="source-icon" style="background: #FF0000;">📺</div>
-                        <div class="source-icon" style="background: #0077B5;">💼</div>
-                        <div class="source-icon" style="background: #25D366;">📱</div>
-                        <div class="source-count">+3</div>
+            <div class="slider-track" id="sliderTrack">
+                @foreach ($newsItems as $news)
+                    <div class="slide-item">
+                        @if ($news->image)
+                            <img src="{{ asset('storage/' . $news->image) }}" alt="{{ $news->title }}">
+                        @else
+                            <img src="https://images.unsplash.com/photo-1464746133101-a2c3f88e0dd9?w=500&h=400&fit=crop"
+                                alt="{{ $news->title }}">
+                        @endif
+                        <div class="slide-overlay">
+                            <a href="{{ route('news.show', $news->id) }}" class="slide-link">
+                                <div class="slide-title">
+                                    {{ app()->getLocale() === 'np' && $news->title_nep ? $news->title_nep : $news->title }}
+                                </div>
+                            </a>
+                            @if ($news->sources && is_array($news->sources) && count($news->sources) > 0)
+                                <div class="slide-sources">
+                                    @foreach (array_slice($news->sources, 0, 4) as $source)
+                                        <div class="source-icon" style="background: {{ $source['color'] ?? '#666' }};"
+                                            title="{{ $source['name'] ?? 'Source' }}">
+                                            {{ $source['icon'] ?? '📰' }}
+                                        </div>
+                                    @endforeach
+                                    @if (count($news->sources) > 4)
+                                        <div class="source-count">+{{ count($news->sources) - 4 }}</div>
+                                    @endif
+                                </div>
+                            @elseif($news->source_name)
+                                <div class="slide-sources">
+                                    <div class="source-icon" style="background: #666;">📰</div>
+                                    <small style="color: white; margin-left: 5px;">{{ $news->source_name }}</small>
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                </div>
+                @endforeach
             </div>
 
-
-            <div class="slide-item">
-                <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=500&h=400&fit=crop"
-                    alt="News">
-                <div class="slide-overlay">
-                    <div class="slide-title">गाहा सृङ्खलापछि हत्तुरुआमाको हत्या, रे पुज</div>
-                    <div class="slide-sources">
-                        <div class="source-icon" style="background: #FF4500;">📰</div>
-                        <div class="source-icon" style="background: #00C4CC;">🌐</div>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="slide-item">
-                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&h=400&fit=crop"
-                    alt="News">
-                <div class="slide-overlay">
-                    <div class="slide-title">अर्थपालको हिंसाले भिकाडमा बाल्किए, आओसले बात्तिन</div>
-                    <div class="slide-sources">
-                        <div class="source-icon" style="background: #E60023;">📌</div>
-                        <div class="source-icon" style="background: #FF0000;">▶️</div>
-                        <div class="source-icon" style="background: #1DA1F2;">🐦</div>
-                        <div class="source-icon" style="background: #333;">📱</div>
-                        <div class="source-count">+1</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 4 -->
-            <div class="slide-item">
-                <img src="https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?w=500&h=400&fit=crop"
-                    alt="News">
-                <div class="slide-overlay">
-                    <div class="slide-title">अमेरिकाको लागि रिमे कार्यक्रम चोलेन निर्णयमा</div>
-                    <div class="slide-sources">
-                        <div class="source-icon" style="background: #00C4CC;">🌐</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 5 -->
-            <div class="slide-item">
-                <img src="https://images.unsplash.com/photo-1520769669658-f07657f5a307?w=500&h=400&fit=crop"
-                    alt="News">
-                <div class="slide-overlay">
-                    <div class="slide-title">ट्रम्प महिला २०० जनासम्मको नागरिकता रद्द</div>
-                    <div class="slide-sources">
-                        <div class="source-icon" style="background: #E60023;">📌</div>
-                        <div class="source-icon" style="background: #0077B5;">💼</div>
-                        <div class="source-icon" style="background: #FF0000;">▶️</div>
-                        <div class="source-icon" style="background: #FF4500;">📰</div>
-                        <div class="source-count">+4</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 6 -->
-            <div class="slide-item">
-                <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=400&fit=crop"
-                    alt="News">
-                <div class="slide-overlay">
-                    <div class="slide-title">अत्तिलिक अर्लाममा रोहे बालिष्टसले सुनाई चुनाई</div>
-                    <div class="slide-sources">
-                        <div class="source-icon" style="background: #E60023;">📌</div>
-                        <div class="source-icon" style="background: #0077B5;">💼</div>
-                        <div class="source-icon" style="background: #FF0000;">▶️</div>
-                        <div class="source-icon" style="background: #333;">📱</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 7 -->
-            <div class="slide-item">
-                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=500&h=400&fit=crop"
-                    alt="News">
-                <div class="slide-overlay">
-                    <div class="slide-title">काठमाडौं महानगरको नगरसभा पुरै सु मा</div>
-                    <div class="slide-sources">
-                        <div class="source-icon" style="background: #E60023;">📌</div>
-                        <div class="source-icon" style="background: #00C4CC;">🌐</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 8 -->
-            <div class="slide-item">
-                <img src="https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=500&h=400&fit=crop"
-                    alt="News">
-                <div class="slide-overlay">
-                    <div class="slide-title">अमेरिकाको गम्को दिगो कार्यक्रम बन्द गर्ने घोषणा</div>
-                    <div class="slide-sources">
-                        <div class="source-icon" style="background: #1DA1F2;">🐦</div>
-                        <div class="source-icon" style="background: #0077B5;">💼</div>
-                        <div class="source-icon" style="background: #FF0000;">📺</div>
-                        <div class="source-icon" style="background: #00C4CC;">🌐</div>
-                        <div class="source-count">+1</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 9 -->
-            <div class="slide-item">
-                <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=500&h=400&fit=crop"
-                    alt="News">
-                <div class="slide-overlay">
-                    <div class="slide-title">अमेरिकाले एकास्मे गनु</div>
-                    <div class="slide-sources">
-                        <div class="source-icon" style="background: #FF4500;">📰</div>
-                        <div class="source-icon" style="background: #00C4CC;">🌐</div>
-                    </div>
-                </div>
-            </div>
+            <button type="button" class="nav-button nav-next" id="nextBtn" aria-label="Next">
+                <span aria-hidden="true"><i class="fa-solid fa-angle-right" style="margin-right:2px "></i></span>
+            </button>
         </div>
-
-        <button type="button" class="nav-button nav-next" id="nextBtn" aria-label="Next">
-            <span aria-hidden="true"><i class="fa-solid fa-angle-right" style="margin-right:2px "></i></span>
-        </button>
     </div>
-</div>
+@endif

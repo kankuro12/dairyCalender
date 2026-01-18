@@ -3,20 +3,37 @@ $(document).ready(function () {
     const $sliderTrack = $('#sliderTrack');
     const $nextBtn = $('#nextBtn');
     const $prevBtn = $('#prevBtn');
+    const $sliderWrapper = $('.slider-wrapper');
 
     if (!$sliderTrack.length || !$nextBtn.length || !$prevBtn.length) {
         console.warn('News slider elements not found');
         return;
     }
 
-    const $originalSlides = $('.slide-item').clone();
-    $sliderTrack.append($originalSlides);
-
     const $slides = $('.slide-item');
+    const originalSlidesCount = $slides.length;
+
+    // Calculate how many slides fit in viewport
+    const containerWidth = $sliderWrapper.width();
+    const slideWidth = 295; // 280px width + 15px gap
+    const visibleSlides = Math.floor(containerWidth / slideWidth);
+
+    // Only enable slider if we have more slides than can fit on screen
+    const needsSliding = originalSlidesCount > visibleSlides;
+
+    if (!needsSliding) {
+        // Hide navigation buttons and disable sliding
+        $nextBtn.hide();
+        $prevBtn.hide();
+        return;
+    }
+
     let currentPosition = 0;
-    const slideWidth = 295;
-    const originalSlidesCount = $originalSlides.length;
     const totalWidth = originalSlidesCount * slideWidth;
+
+    // Clone slides for infinite loop effect only if we have enough items
+    const $clonedSlides = $slides.clone();
+    $sliderTrack.append($clonedSlides);
 
     function slideNext() {
         currentPosition += slideWidth;

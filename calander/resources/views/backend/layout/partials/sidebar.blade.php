@@ -28,6 +28,12 @@
                        <span>Announcements</span>
                    </a>
                </li>
+               <li class='nav-item {{ request()->routeIs('admin.news.index') ? 'active' : '' }}'>
+                   <a href='{{ route('admin.news.index') }}' class='nav-link'>
+                       <i class='fas fa-newspaper'></i>
+                       <span>News</span>
+                   </a>
+               </li>
                <li class='nav-item {{ request()->routeIs('admin.event.logo') ? 'active' : '' }}'>
                    <a href='{{ route('admin.settings.logo') }}' class='nav-link'>
                        <i class='fas fa-image'></i>

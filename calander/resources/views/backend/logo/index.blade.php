@@ -173,6 +173,34 @@
                         </div>
                     </div>
 
+                    <!-- Features Section -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-toggle-on"></i>
+                                Feature Toggles
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-newspaper"></i> News Section
+                                </label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="show_news_section"
+                                        name="show_news_section" value="1"
+                                        {{ old('show_news_section', $get('show_news_section', '1')) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="show_news_section">
+                                        Show news slider section on homepage
+                                    </label>
+                                </div>
+                                <small class="form-text text-muted">
+                                    When enabled, news slider will be displayed on the calendar homepage
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Ad Sliders Section -->
                     <div class="content-card" style="grid-column: 1 / -1;">
                         <div class="card-header">

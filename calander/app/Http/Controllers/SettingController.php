@@ -78,6 +78,8 @@ class SettingController extends Controller
 
             'logo_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'remove_logo_image' => 'nullable|boolean',
+
+            'show_news_section' => 'nullable|boolean',
         ]);
 
         foreach (['site_name', 'contact_phone', 'contact_email', 'contact_address'] as $key) {
@@ -88,6 +90,9 @@ class SettingController extends Controller
         Setting::setValue('logo_color', $color);
         Setting::setValue('logo_color_hex', $color);
 
+        // Save show_news_section setting
+        Setting::setValue('show_news_section', $request->boolean('show_news_section', true));
+
         // Invalidate caches first, we'll repopulate after changes.
         Cache::forget('settings');
         Cache::forget('sliders');
@@ -96,9 +101,9 @@ class SettingController extends Controller
             $this->handleLogo($request);
             $this->handleSliders($request);
 
-            // Rebuild caches for quick access elsewhere in the app
+            // Rebuild caches for quick access elsewhere in the app using rememberForever
             $settingsArr = Setting::pluck('value', 'key')->toArray();
-            Cache::put('settings', $settingsArr);
+            Cache::forever('settings', $settingsArr);
 
             $sliders = array_filter(
                 $settingsArr,
@@ -110,7 +115,7 @@ class SettingController extends Controller
                 <=>
                 (int) filter_var($b, FILTER_SANITIZE_NUMBER_INT)
             );
-            Cache::put('sliders', $sliders);
+            Cache::forever('sliders', $sliders);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Re-throw validation errors so they display properly
             Log::warning('Validation failed', [
