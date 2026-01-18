@@ -42,7 +42,7 @@
         <!-- Navigation Links -->
         <div class="nav-center" id="navCenter">
             <ul class="nav-links">
-                <li><a href="#">{{ __('site.home') }}</a></li>
+                {{-- <li><a href="#">{{ __('site.home') }}</a></li>
                 <li><a href="#">Mart</a></li>
                 <li><a href="#">Gifts</a></li>
                 <li><a href="#">Recharge</a></li>
@@ -54,7 +54,7 @@
                 <li><a href="#">Blog</a></li>
                 <li><a href="#">Gold/Silver</a></li>
                 <li><a href="#">Forex</a></li>
-                <li><a href="#">Converter</a></li>
+                <li><a href="#">Converter</a></li> --}}
             </ul>
         </div>
         @include('calendar.layout.partials.message')
